@@ -87,6 +87,7 @@ void DAGStreaming::Schedule() {
   // start all subnodes.
   for (auto& pair : subnode_map_) {
     pair.second->Start();
+    AINFO << "Zuo test subnode name = " << pair.second->name();
   }
 
   AINFO << "DAGStreaming start to schedule...";
@@ -183,8 +184,8 @@ bool DAGStreaming::InitSubnodes(const DAGConfig& dag_config) {
     }
 
     //-- Zuo added on 2018-04-08 --//
-    //这里Init()虽然是虚函数，但是一般subnode也没有重写，所以实际上调用的是基类subnode的实现。
-    //-- 在基类subnode里面主要调用了InitInternal()，这个也是虚函数，一般被子类重写了，具体参考相应的子类文件。
+    //这里Init()虽然是虚函数，但是一般派生类也没有重写，所以实际上调用的是基类subnode的实现。
+    //-- 在subnode::Init()里面主要调用了InitInternal()，这个也是虚函数，一般被子类重写了，具体参考相应的子类文件。
     //-- 所以InitInternal()也是在增加子节点的时候的必须。 
     bool result = inst->Init(subnode_config, subnode_sub_events_map[subnode_id],
                              subnode_pub_events_map[subnode_id],

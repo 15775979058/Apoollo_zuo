@@ -25,6 +25,8 @@ namespace perception {
 
 using apollo::common::adapter::AdapterManager;
 
+//-- Zuo added on 2018-04-10
+//-- 在Subnode::Init()里被调用
 bool CameraProcessSubnode::InitInternal() {
   // Subnode config in DAG streaming
   std::unordered_map<std::string, std::string> fields;

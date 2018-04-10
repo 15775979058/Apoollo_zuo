@@ -29,6 +29,8 @@ using std::vector;
 using std::string;
 using std::ostringstream;
 
+//-- Zuo added on 2018-04-10
+//-- 在DAGStreaming::InitSubnodes()里被调用，一般的派生类没有重写本函数
 bool Subnode::Init(const DAGConfig::Subnode &subnode_config,
                    const vector<EventID> &sub_events,
                    const vector<EventID> &pub_events,

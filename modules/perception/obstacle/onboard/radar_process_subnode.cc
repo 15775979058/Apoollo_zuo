@@ -144,6 +144,8 @@ void RadarProcessSubnode::OnRadar(const ContiRadar &radar_obs) {
   std::shared_ptr<Matrix4d> radar2world_pose = std::make_shared<Matrix4d>();
   std::shared_ptr<Matrix4d> radar2car_pose = std::make_shared<Matrix4d>();
 
+  //-- Zuo added on 2018-04-10
+  //-- 求Radar坐标，这里可以看出，传感器坐标系是以Lidar为参考？
   if (!FLAGS_use_navigation_mode) {
     *radar2world_pose =
         *velodyne2world_pose * short_camera_extrinsic_ * radar_extrinsic_;
