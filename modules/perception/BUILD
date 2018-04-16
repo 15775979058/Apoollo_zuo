@@ -24,6 +24,7 @@ cc_library(
         "//modules/perception/obstacle/onboard:zuo_test_subnode",
         "//modules/perception/onboard",
         "//modules/perception/proto:perception_proto",
+        "//modules/perception/proto:perception_test_proto",
         "//modules/perception/traffic_light/onboard",
         "@com_google_protobuf//:protobuf",
         "@ros//:ros_common",

@@ -1,0 +1,12 @@
+//-- Zuo added on 2018-04-11 for Doc 'How to add a new msg'
+//-- This is a test msg
+
+syntax = "proto2";
+
+package apollo.perception;
+
+message ZuoTestMsg{
+    optional int32 x = 1;
+    optional int32 y = 2;
+    optional string info = 3;
+}

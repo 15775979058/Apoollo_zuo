@@ -35,6 +35,11 @@ bool CameraProcessSubnode::InitInternal() {
   if (fields.count("device_id")) device_id_ = fields["device_id"];
   if (fields.count("publish") && stoi(fields["publish"])) publish_ = true;
 
+  //-- Zuo added on 2018-04-12
+  AINFO << "publish's count = " << fields.count("publish");
+  AINFO << "fields[publish] = " << fields["publish"];
+  //-- Zuo added on 2018-04-12
+
   // Shared Data
   cam_obj_data_ = static_cast<CameraObjectData *>(
       shared_data_manager_->GetSharedData("CameraObjectData"));
@@ -45,10 +50,14 @@ bool CameraProcessSubnode::InitInternal() {
 
   InitModules();
 
-  AdapterManager::AddImageShortCallback(&CameraProcessSubnode::ImgCallback,
-                                        this);
-  if (publish_) AdapterManager::AddChassisCallback(
-    &CameraProcessSubnode::ChassisCallback, this);
+  //-- 这里为什么要设计成Callback，内部使用std::bind //adapter.h
+  //-- 会在哪里被调用呢？
+  //-- 这里初步判定就是subscribe的回调函数
+  AdapterManager::AddImageShortCallback(&CameraProcessSubnode::ImgCallback, this);
+
+  if (publish_) {
+    AdapterManager::AddChassisCallback(&CameraProcessSubnode::ChassisCallback, this);
+  }
 
   return true;
 }
@@ -244,6 +253,12 @@ void CameraProcessSubnode::PublishPerceptionPb(
                                        chassis_.speed_mps());
   }
 
+  //-- Zuo added on 2018-04-11
+  //-- 1. 关于函数PublishPerceptionObstacles()的定义，移步'adapter_manager.h'
+  //-- 这里又是用了宏定义+'##'拼接符来实现的。
+  //-- 2. 宏'REGISTER_ADAPTER(PerceptionObstacles)'的调用也是在'adapter_manager.h'中,
+  //-- 这样子是不是太粗犷了？如果将宏展开放在各自的头文件内(参考subnode Register)，对编译的速度会有多大的提升？
+  //--  答：这里不会出现多次声明，因为宏展开是放在类里面，而不是在头文件的普通位置
   common::adapter::AdapterManager::PublishPerceptionObstacles(obstacles);
   ADEBUG << "Camera Obstacles: " << obstacles.ShortDebugString();
 }

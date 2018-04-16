@@ -284,6 +284,13 @@ class AdapterManager {
   REGISTER_ADAPTER(VoiceDetectionRequest);
   REGISTER_ADAPTER(VoiceDetectionResponse);
 
+
+  //-- Zuo added on 2018-04-12
+  //-- 这里的名字要和adapter_manager.cc里面的EnableXXX的名字相同
+  //-- 名字可以任意取，能够顾名思义即可。
+  // REGISTER_ADAPTER(ZuoTest);
+  //-- Zuo added on 2018-04-12
+
   DECLARE_SINGLETON(AdapterManager);
 };
 

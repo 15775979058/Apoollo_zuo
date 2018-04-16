@@ -20,3 +20,17 @@ proto_library(
         "//modules/map/proto:map_proto_lib",
     ],
 )
+
+cc_proto_library(
+    name = "perception_test_proto",
+    deps = [
+        ":perception_test_proto_lib",
+    ],
+)
+
+proto_library(
+    name = "perception_test_proto_lib",
+    srcs = [
+        "zuo_test_msg.proto",
+    ],
+)

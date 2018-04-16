@@ -52,18 +52,21 @@ using apollo::common::ErrorCode;
 std::string Perception::Name() const { return "perception"; }
 
 Status Perception::Init() {
-  /**
-   * Zuo commented on 2018-04-02
-   * FLAGS_perception_adapter_config_filename是gflag的配置参数的方式。在Apollo里面一般在×××_flags.h里面进行申明
-   * 这里参照/home/zuo/apollo_ws/apollo-0326/modules/perception/common/perception_gflags.cc :L19
-   */
+  
+  //-- Zuo commented on 2018-04-02
+  //-- 1. FLAGS_perception_adapter_config_filename是gflag的配置参数的方式。在Apollo里面一般在×××_flags.h里面进行申明
+  //--        这里参照/home/zuo/apollo_ws/apollo-0326/modules/perception/common/perception_gflags.cc :L19
+  //-- 2. 这里根据‘/modules/perception/conf/adapter.conf’里面的内容，调用ROS::subcribe()，配置好了各个节点publish/subcribe的topic。
   AdapterManager::Init(FLAGS_perception_adapter_config_filename);
 
   //-- Zuo add a test info output on 2018-04-04 --//
   AINFO << "===== test info on perception.cc =====";
+  AINFO << "FLAGS_perception_adapter_config_filename = " << FLAGS_perception_adapter_config_filename;
   //-- Zuo add a test info output on 2018-04-04 --//
 
+
   RegistAllOnboardClass();
+
   /// init config manager
   ConfigManager* config_manager = ConfigManager::instance();
   if (!config_manager->Init()) {
