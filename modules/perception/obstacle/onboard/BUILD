@@ -305,12 +305,43 @@ cc_library(
         "//modules/perception/obstacle/camera/transformer",
         "//modules/perception/onboard",
         "//modules/perception/traffic_light/util",
-        "//modules/perception/proto:perception_test_proto",
+        "//modules/perception/proto:zuo_test_proto",
         "@eigen",
         "@opencv2//:core",
         "@ros//:ros_common",
     ],
 )
+
+cc_library(
+    name = "zuo_test_2_subnode",
+    srcs = [
+        "zuo_test_2_subnode.cc",
+    ],
+    hdrs = [
+        "zuo_test_2_subnode.h",
+        "object_shared_data.h",
+    ],
+    deps = [
+        ":perception_obstacle_shared_data",
+        "//modules/common:log",
+        "//modules/common/adapters:adapter_manager",
+        "//modules/perception/common",
+        "//modules/perception/lib/config_manager",
+        "//modules/perception/obstacle/camera/converter",
+        "//modules/perception/obstacle/camera/detector/yolo_camera_detector",
+        "//modules/perception/obstacle/camera/dummy",
+        "//modules/perception/obstacle/camera/filter",
+        "//modules/perception/obstacle/camera/tracker",
+        "//modules/perception/obstacle/camera/transformer",
+        "//modules/perception/onboard",
+        "//modules/perception/traffic_light/util",
+        "//modules/perception/proto:zuo_test_proto",
+        "@eigen",
+        "@opencv2//:core",
+        "@ros//:ros_common",
+    ],
+)
+
 
 
 cc_test(

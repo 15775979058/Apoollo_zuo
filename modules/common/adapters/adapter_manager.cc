@@ -185,6 +185,12 @@ void AdapterManager::Init(const AdapterManagerConfig &configs) {
         EnableVoiceDetectionResponse(FLAGS_voice_detection_response_topic,
                                      config);
         break;
+      //-- Zuo added on 2018-04-16
+      //-- 需要在adapter_config.proto里面的枚举里面增加一项ZUO_TEST
+      case AdapterConfig::ZUO_TEST:
+        EnableZuoTestMsg(FLAGS_zuo_test_topic, config);
+        break;
+      //-- Zuo added on 2018-04-16
       default:
         AERROR << "Unknown adapter config type!";
         break;

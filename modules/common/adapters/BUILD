@@ -100,6 +100,7 @@ cc_library(
         "//modules/planning/proto:planning_proto",
         "//modules/prediction/proto:prediction_proto",
         "//modules/routing/proto:routing_proto",
+        "//modules/perception/proto:zuo_test_proto",
         "@glog",
     ],
 )

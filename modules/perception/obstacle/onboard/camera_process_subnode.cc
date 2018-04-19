@@ -258,7 +258,7 @@ void CameraProcessSubnode::PublishPerceptionPb(
   //-- 这里又是用了宏定义+'##'拼接符来实现的。
   //-- 2. 宏'REGISTER_ADAPTER(PerceptionObstacles)'的调用也是在'adapter_manager.h'中,
   //-- 这样子是不是太粗犷了？如果将宏展开放在各自的头文件内(参考subnode Register)，对编译的速度会有多大的提升？
-  //--  答：这里不会出现多次声明，因为宏展开是放在类里面，而不是在头文件的普通位置
+  //-- 答：这里不会出现多次声明，因为宏展开是放在类里面，而不是在头文件的普通位置
   common::adapter::AdapterManager::PublishPerceptionObstacles(obstacles);
   ADEBUG << "Camera Obstacles: " << obstacles.ShortDebugString();
 }

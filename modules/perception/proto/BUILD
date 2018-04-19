@@ -22,14 +22,14 @@ proto_library(
 )
 
 cc_proto_library(
-    name = "perception_test_proto",
+    name = "zuo_test_proto",
     deps = [
-        ":perception_test_proto_lib",
+        ":zuo_test_proto_lib",
     ],
 )
 
 proto_library(
-    name = "perception_test_proto_lib",
+    name = "zuo_test_proto_lib",
     srcs = [
         "zuo_test_msg.proto",
     ],

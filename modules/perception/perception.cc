@@ -41,6 +41,7 @@
 //-- Zuo add on 2018-04-03 --//
 #include "modules/perception/obstacle/onboard/zuo_test_subnode.h"
 //-- Zuo add on 2018-04-03 --//
+#include "modules/perception/obstacle/onboard/zuo_test_2_subnode.h"
 
 namespace apollo {
 namespace perception {
@@ -61,7 +62,6 @@ Status Perception::Init() {
 
   //-- Zuo add a test info output on 2018-04-04 --//
   AINFO << "===== test info on perception.cc =====";
-  AINFO << "FLAGS_perception_adapter_config_filename = " << FLAGS_perception_adapter_config_filename;
   //-- Zuo add a test info output on 2018-04-04 --//
 
 
@@ -79,6 +79,8 @@ Status Perception::Init() {
   const std::string dag_config_path = apollo::common::util::GetAbsolutePath(
       FLAGS_work_root, FLAGS_dag_config_path);
 
+  AINFO << "dag_config_path: " << dag_config_path;
+
   if (!dag_streaming_.Init(dag_config_path)) {
     AERROR << "failed to Init DAGStreaming. dag_config_path:"
            << dag_config_path;
@@ -95,6 +97,7 @@ Status Perception::Init() {
  * 在/perception/obstacle/onboard/lidar_process_subnode.h :L89
  * 即每个模块在其对应的头文件内定义好了，函数使用的##拼接的方法，在register.h，不过又被封装了几层
  * 但是没有找到RegisterFactoryLidarObjectData这类型的在哪里
+ * 答：在shared_data里面
  */
 void Perception::RegistAllOnboardClass() {
   /// regist sharedata
@@ -110,10 +113,6 @@ void Perception::RegistAllOnboardClass() {
   RegisterFactoryLidarProcessSubnode();
   RegisterFactoryRadarProcessSubnode();
   RegisterFactoryCameraProcessSubnode();
-  //-- Zuo add on 2018-04-03 --//
-  RegisterFactoryZuoTestSubnode();
-  AINFO << " Zuo Register TestSubnode successfull ";
-  //-- Zuo add on 2018-04-03 --//
   RegisterFactoryLanePostProcessingSubnode();
   RegisterFactoryAsyncFusionSubnode();
   RegisterFactoryFusionSubnode();
@@ -121,6 +120,12 @@ void Perception::RegistAllOnboardClass() {
   lowcostvisualizer::RegisterFactoryVisualizationSubnode();
   traffic_light::RegisterFactoryTLPreprocessorSubnode();
   traffic_light::RegisterFactoryTLProcSubnode();
+
+  //-- Zuo add on 2018-04-03 --//
+  RegisterFactoryZuoTestSubnode();
+  AINFO << " Zuo Register TestSubnode successfull ";
+  RegisterFactoryZuoTest2Subnode();
+  //-- Zuo add on 2018-04-03 --//
 }
 
 Status Perception::Start() {

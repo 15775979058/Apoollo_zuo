@@ -14,8 +14,8 @@
  * limitations under the License.
  *****************************************************************************/
 
-#ifndef MODULES_PERCEPTION_OBSTACLE_ONBOARD_ZUO_TEST_SUBNODE_H_
-#define MODULES_PERCEPTION_OBSTACLE_ONBOARD_ZUO_TEST_SUBNODE_H_
+#ifndef MODULES_PERCEPTION_OBSTACLE_ONBOARD_ZUO_TEST_2_SUBNODE_H_
+#define MODULES_PERCEPTION_OBSTACLE_ONBOARD_ZUO_TEST_2_SUBNODE_H_
 
 #include <algorithm>
 #include <memory>
@@ -38,12 +38,15 @@
 #include "modules/perception/obstacle/base/object.h"
 #include "modules/perception/obstacle/base/types.h"
 #include "modules/perception/obstacle/camera/converter/geometry_camera_converter.h"
+#include "modules/perception/obstacle/camera/detector/yolo_camera_detector/yolo_camera_detector.h"
 #include "modules/perception/obstacle/camera/dummy/dummy_algorithms.h"
+#include "modules/perception/obstacle/camera/filter/object_camera_filter.h"
 #include "modules/perception/obstacle/camera/interface/base_camera_converter.h"
 #include "modules/perception/obstacle/camera/interface/base_camera_detector.h"
 #include "modules/perception/obstacle/camera/interface/base_camera_filter.h"
 #include "modules/perception/obstacle/camera/interface/base_camera_tracker.h"
 #include "modules/perception/obstacle/camera/interface/base_camera_transformer.h"
+#include "modules/perception/obstacle/camera/tracker/cascaded_camera_tracker.h"
 #include "modules/perception/obstacle/camera/transformer/flat_camera_transformer.h"
 #include "modules/perception/obstacle/onboard/camera_shared_data.h"
 #include "modules/perception/obstacle/onboard/object_shared_data.h"
@@ -51,50 +54,34 @@
 #include "modules/perception/onboard/subnode_helper.h"
 #include "modules/perception/proto/perception_obstacle.pb.h"
 
-#include "modules/perception/traffic_light/util/color_space.h"
-
-//-- Zuo test for msg proto 2018-04-11
+//-- Zuo added a new msg 2018-04-11
 #include "modules/perception/proto/zuo_test_msg.pb.h"
-//-- Zuo test for msg proto 2018-04-11
+//-- Zuo added a new msg 2018-04-11
 
-#include <opencv2/opencv.hpp>
+// #include <opencv2/opencv.hpp>
 
 /**
- * Zuo add on 2018-04-02
- * How to add a subnode
+ * Zuo add on 2018-04-16
+ * How to publish/subscribe msg on subnode
  */
 
 namespace apollo {
 namespace perception {
 
-class ZuoTestSubnode : public Subnode {
+class ZuoTest2Subnode : public Subnode {
  public:
-  ZuoTestSubnode() = default;
-  ~ZuoTestSubnode() = default;
+  ZuoTest2Subnode() = default;
+  ~ZuoTest2Subnode() = default;
 
-  apollo::common::Status ProcEvents() override {
-    return apollo::common::Status::OK();
-  }
+  apollo::common::Status ProcEvents() override;
 
  private:
   bool InitInternal() override;
-
-  /**
-   * Zuo added on 2018-04-13
-   * 测试subscribe功能，订阅了
-   */
-  void ZuoImgTestCallback(const apollo::perception::ZuoTestMsg &message);
-
-  bool MessageToMat(const sensor_msgs::Image& msg, cv::Mat* img);
-
-  int32_t image_height_ = 1080;
-  int32_t image_width_ = 1920;
 };
 
-REGISTER_SUBNODE(ZuoTestSubnode);
+REGISTER_SUBNODE(ZuoTest2Subnode);
 
 }  // namespace perception
 }  // namespace apollo
 
 #endif  // MODULES_PERCEPTION_OBSTACLE_ONBORAD_CAMERA_PROCESS_SUBNODE_H_
-

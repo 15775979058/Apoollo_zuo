@@ -96,3 +96,8 @@ DEFINE_string(voice_detection_request_topic,
 DEFINE_string(voice_detection_response_topic,
               "/apollo/hmi/voice_detection_response",
               "Voice detetection response topic name.");
+
+//-- Zuo added on 2018-04-16 for testPublishSubnode
+DEFINE_string(zuo_test_topic, "/apollo/zuo/zuo_test",
+              "Zuo added for testPublishMsg");
+//-- Zuo added on 2018-04-16 for testPublishSubnode

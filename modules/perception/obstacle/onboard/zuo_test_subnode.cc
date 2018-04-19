@@ -16,39 +16,43 @@
 
 #include "modules/perception/obstacle/onboard/zuo_test_subnode.h"
 
-#include <unordered_map>
-
-#include "modules/perception/traffic_light/util/color_space.h"
+// #include <unordered_map>
 
 namespace apollo {
 namespace perception {
 
 using apollo::common::adapter::AdapterManager;
 
-bool ZuoTestSubnode::InitInternal() {
-  //-- Zuo add a test info output --//
-  AINFO << "===== Zuo test info on zuo_test_subnode.cc InitInternal =====";
-  //-- Zuo add a test info output --//
 
-  // AdapterManager::AddImageShortCallback(&ZuoTestSubnode::ZuoImgTestCallback,this);
-  AdapterManager::AddImageShortCallback(&ZuoTestSubnode::ZuoImgTestCallback);
+bool ZuoTestSubnode::InitInternal() {
+
+  AINFO << "===== ZuoTestSubnode::InitInternal =====";
+  AINFO << "===== Zuo callback queue size before Add = "
+        << AdapterManager::PopZuoTestMsgCallback();
+
+  // AdapterManager::AddImageShortCallback(&ZuoTestSubnode::ZuoImgTestCallback, this);
+  AdapterManager::AddZuoTestMsgCallback(&ZuoTestSubnode::ZuoImgTestCallback, this);
+
+  AINFO << "===== ZuoTest callback queue size after Add = "
+        << AdapterManager::PopZuoTestMsgCallback();
 
   return true;
 }
 
-void ZuoTestSubnode::ZuoImgTestCallback(const sensor_msgs::Image &message) {
+void ZuoTestSubnode::ZuoImgTestCallback(const apollo::perception::ZuoTestMsg &message) {
 
   AINFO << " ZuoImgTestCallback";
 
-  cv::Mat img;
-  MessageToMat(message, &img);
+  // common::adapter::AdapterManager::PublishZuoTest(message);
 
+  // cv::Mat img;
+  // MessageToMat(message, &img);
 
-  if( !img.empty() ) {
-    AINFO << " ZuoImgTestCallback's img size = " << img.size();
-    cv::imshow("test", img);
-    cv::waitKey(1);
-  }
+  // if( !img.empty() ) {
+  //   AINFO << " ZuoImgTestCallback's img size = " << img.size();
+  //   cv::imshow("recieve img", img);
+  //   cv::waitKey(1);
+  // }
 }
 
 bool ZuoTestSubnode::MessageToMat(const sensor_msgs::Image &msg, cv::Mat *img) {

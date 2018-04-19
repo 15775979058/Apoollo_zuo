@@ -63,4 +63,7 @@ DECLARE_string(navigation_topic);
 DECLARE_string(voice_detection_request_topic);
 DECLARE_string(voice_detection_response_topic);
 
+//-- Zuo added on 2018-04-16 for testPublishSubnode
+DECLARE_string(zuo_test_topic);
+//-- Zuo added on 2018-04-16 for testPublishSubnode
 #endif  // MODULES_COMMON_ADAPTERS_ADAPTER_GFLAGS_H_

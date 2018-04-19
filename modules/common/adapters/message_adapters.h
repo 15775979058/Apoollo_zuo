@@ -51,6 +51,10 @@
 #include "sensor_msgs/Image.h"
 #include "sensor_msgs/PointCloud2.h"
 
+//-- Zuo added a new msg 2018-04-17
+#include "modules/perception/proto/zuo_test_msg.pb.h"
+//-- Zuo added a new msg 2018-04-17
+
 /**
  * @file message_adapters.h
  * @namespace apollo::common::adapter
@@ -109,6 +113,11 @@ using VoiceDetectionRequestAdapter =
     Adapter<apollo::dreamview::VoiceDetectionRequest>;
 using VoiceDetectionResponseAdapter =
     Adapter<apollo::dreamview::VoiceDetectionResponse>;
+
+//-- Zuo added on 2018-04-16 for publish a new msg
+// using ZuoTestAdapter = Adapter<::sensor_msgs::Image>;
+using ZuoTestMsgAdapter = Adapter<apollo::perception::ZuoTestMsg>;
+//-- Zuo added on 2018-04-16 for publish a new msg
 
 }  // namespace adapter
 }  // namespace common
