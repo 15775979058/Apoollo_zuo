@@ -41,6 +41,7 @@ DEFINE_int64(agent_mutual_send_frames, 1000, "Every agent send frame num");
 
 const int32_t MAX_CAN_SEND_FRAME_LEN = 1;
 const int32_t MAX_CAN_RECV_FRAME_LEN = 10;
+const int32_t MAX_KVASER_CAN_RECV_FRAME_LEN = 1;
 
 namespace apollo {
 namespace drivers {

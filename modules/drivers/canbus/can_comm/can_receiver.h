@@ -140,7 +140,7 @@ void CanReceiver<SensorType>::RecvThreadFunc() {
 
   while (IsRunning()) {
     std::vector<CanFrame> buf;
-    int32_t frame_num = MAX_CAN_RECV_FRAME_LEN;
+    int32_t frame_num = MAX_KVASER_CAN_RECV_FRAME_LEN;
     if (can_client_->Receive(&buf, &frame_num) !=
         ::apollo::common::ErrorCode::OK) {
       LOG_IF_EVERY_N(ERROR, receive_error_count++ > ERROR_COUNT_MAX,

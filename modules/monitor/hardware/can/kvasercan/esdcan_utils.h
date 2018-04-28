@@ -14,33 +14,29 @@
  * limitations under the License.
  *****************************************************************************/
 
-/**
- * @file
- */
+#ifndef MODULES_MONITOR_HARDWARE_CAN_ESDCAN_ESDCAN_UTILS_H_
+#define MODULES_MONITOR_HARDWARE_CAN_ESDCAN_ESDCAN_UTILS_H_
 
-#ifndef MODULES_DRIVERS_CANBUS_COMMON_CANBUS_CONSTS_H_
-#define MODULES_DRIVERS_CANBUS_COMMON_CANBUS_CONSTS_H_
-
-#include <cstdint>
+#include "modules/monitor/hardware/can/esdcan/esdcan_test.h"
 
 /**
- * @namespace apollo::drivers::canbus
- * @brief apollo::drivers::canbus
+ * @namespace apollo::monitor::hw
+ * @brief apollo::monitor::hw
  */
 namespace apollo {
-namespace drivers {
-namespace canbus {
+namespace monitor {
+namespace hw {
 
-const int32_t CAN_FRAME_SIZE = 8;
-const int32_t MAX_CAN_SEND_FRAME_LEN = 1;
-const int32_t MAX_CAN_RECV_FRAME_LEN = 10;
-const int32_t MAX_KVASER_CAN_RECV_FRAME_LEN = 1;
+void esdcan_print_if_status(int id, const CAN_IF_STATUS &if_status);
 
-const int32_t CANBUS_MESSAGE_LENGTH = 8;  // according to ISO-11891-1
-const int32_t MAX_CAN_PORT = 3;
+void esdcan_print_stats(const NTCAN_BUS_STATISTIC &stats);
 
-}  // namespace canbus
-}  // namespace drivers
+void esdcan_print_ctrl_state(const NTCAN_CTRL_STATE &c_state);
+
+void esdcan_print_bitrate(const NTCAN_BITRATE &bitrate);
+
+}  // namespace hw
+}  // namespace monitor
 }  // namespace apollo
 
-#endif  // MODULES_DRIVERS_CANBUS_COMMON_CANBUS_CONSTS_H_
+#endif  // MODULES_MONITOR_HARDWARE_CAN_ESDCAN_ESDCAN_UTILS_H_

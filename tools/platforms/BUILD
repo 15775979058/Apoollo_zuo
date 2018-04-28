@@ -22,3 +22,9 @@ config_setting(
         "define": "CAN_CARD=esd_can",
     },
 )
+config_setting(
+    name = "use_kvaser_can",
+    values = {
+        "define": "CAN_CARD=kvaser_can",
+    },
+)

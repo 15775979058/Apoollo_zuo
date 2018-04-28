@@ -17,9 +17,14 @@ cc_library(
         "//modules/common/util:factory",
         "//modules/drivers/canbus/can_client/fake:fake_can_client",
         "//modules/drivers/canbus/can_client/socket:socket_can_client_raw",
-    ] + select({
+    ]+ select({
         "//tools/platforms:use_esd_can": [
             "//modules/drivers/canbus/can_client/esd:esd_can_client",
+        ],
+        "//tools/platforms:use_kvaser_can": [
+            "//modules/drivers/canbus/can_client/kvaser:kvaser_can_client",
+            "//third_party/can_card_library/kvaser_can",
+
         ],
         "//conditions:default": [],
     }),

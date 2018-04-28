@@ -14,33 +14,22 @@
  * limitations under the License.
  *****************************************************************************/
 
-/**
- * @file
- */
+#include "modules/monitor/hardware/can/esdcan/esdcan_test.h"
 
-#ifndef MODULES_DRIVERS_CANBUS_COMMON_CANBUS_CONSTS_H_
-#define MODULES_DRIVERS_CANBUS_COMMON_CANBUS_CONSTS_H_
-
-#include <cstdint>
-
-/**
- * @namespace apollo::drivers::canbus
- * @brief apollo::drivers::canbus
- */
 namespace apollo {
-namespace drivers {
-namespace canbus {
+namespace monitor {
+namespace hw {
 
-const int32_t CAN_FRAME_SIZE = 8;
-const int32_t MAX_CAN_SEND_FRAME_LEN = 1;
-const int32_t MAX_CAN_RECV_FRAME_LEN = 10;
-const int32_t MAX_KVASER_CAN_RECV_FRAME_LEN = 1;
+NTCAN_RESULT EsdCanDetails::esdcan_do_test(int id) {
+  result = NTCAN_SUCCESS;
+  valid_flag = 0;
+  return NTCAN_SUCCESS;
+}
 
-const int32_t CANBUS_MESSAGE_LENGTH = 8;  // according to ISO-11891-1
-const int32_t MAX_CAN_PORT = 3;
+void EsdCanDetails::print_summary(std::ostream &os) {}
 
-}  // namespace canbus
-}  // namespace drivers
+void EsdCanDetails::print_test_result(std::ostream &os) {}
+
+}  // namespace hw
+}  // namespace monitor
 }  // namespace apollo
-
-#endif  // MODULES_DRIVERS_CANBUS_COMMON_CANBUS_CONSTS_H_

@@ -80,16 +80,37 @@ function check_machine_arch() {
 
 function check_esd_files() {
   CAN_CARD="fake_can"
-
+  CHOSE="KVASER"
   if [ -f ./third_party/can_card_library/esd_can/include/ntcan.h \
       -a -f ./third_party/can_card_library/esd_can/lib/libntcan.so.4 \
-      -a -f ./third_party/can_card_library/esd_can/lib/libntcan.so.4.0.1 ]; then
-      USE_ESD_CAN=true
-      CAN_CARD="esd_can"
+      -a -f ./third_party/can_card_library/esd_can/lib/libntcan.so.4.0.1 ];
+  then
+      if [ "${CHOSE}" == "ESD" ] ; then
+        USE_ESD_CAN=true
+        USE_KVASER_CAN=false
+        CAN_CARD="esd_can"
+      fi
   else
       warning "ESD CAN library supplied by ESD Electronics does not exist. If you need ESD CAN, please refer to third_party/can_card_library/esd_can/README.md."
       USE_ESD_CAN=false
   fi
+  if [ -f ./third_party/can_card_library/kvaser_can/include/canlib.h \
+      -a -f ./third_party/can_card_library/kvaser_can/include/canstat.h \
+      -a -f ./third_party/can_card_library/kvaser_can/include/obsolete.h \
+      -a -f ./third_party/can_card_library/kvaser_can/lib/libcanlib.so.1 \
+      -a -f ./third_party/can_card_library/kvaser_can/lib/libcanlib.so.1.2.0 ];
+  then
+        if [ "${CHOSE}" == "KVASER" ] ; then
+          CAN_CARD="kvaser_can"
+          USE_KVASER_CAN=true
+          USE_ESD_CAN=false
+        fi
+  else
+      warning "Kvaser CAN library does not exist."
+      USE_KVASER_CAN=false
+  fi
+
+
 }
 
 function generate_build_targets() {
@@ -280,6 +301,15 @@ function release() {
     for m in esd_can
     do
       cp third_party/can_card_library/$m/lib/* $LIB_DIR
+      echo "copy esd_can lib files"
+    done
+  fi
+  if $USE_KVASER_CAN; then
+    warn_proprietary_sw
+    for m in kvaser_can
+    do
+      cp third_party/can_card_library/$m/lib/* $LIB_DIR
+      echo "copy kvaser_can lib files to $LIB_DIR"
     done
   fi
   cp -r bazel-genfiles/external $LIB_DIR
@@ -589,7 +619,7 @@ function main() {
   apollo_check_system_config
   check_esd_files
 
-  DEFINES="--define ARCH=${MACHINE_ARCH} --define CAN_CARD=${CAN_CARD} --cxxopt=-DUSE_ESD_CAN=${USE_ESD_CAN}"
+  DEFINES="--define ARCH=${MACHINE_ARCH} --define CAN_CARD=${CAN_CARD} --cxxopt=-DUSE_ESD_CAN=${USE_ESD_CAN} --cxxopt=-DUSE_KVASER_CAN=${USE_KVASER_CAN} "
 
   if [ ${MACHINE_ARCH} == "x86_64" ]; then
     DEFINES="${DEFINES} --copt=-mavx2"

@@ -16,6 +16,10 @@ cc_library(
         "//tools/platforms:use_esd_can": [
             "//modules/monitor/hardware/can/esdcan:esdcan_checker_lib",
         ],
+        "//tools/platforms:use_kvaser_can": [
+            "//modules/monitor/hardware/can/kvasercan:kvasercan_checker_lib",
+        ],
+
         "//conditions:default": [],
     }),
 )

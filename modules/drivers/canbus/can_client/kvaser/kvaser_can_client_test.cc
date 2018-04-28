@@ -14,7 +14,9 @@
  * limitations under the License.
  *****************************************************************************/
 
-#include "modules/drivers/canbus/can_client/can_client_factory.h"
+#include "modules/drivers/canbus/can_client/kvaser/kvaser_can_client.h"
+
+#include <vector>
 
 #include "gtest/gtest.h"
 
@@ -23,36 +25,33 @@
 namespace apollo {
 namespace drivers {
 namespace canbus {
+namespace can {
 
-TEST(CanClientFactoryTest, CreateCanClient) {
-  auto *can_factory = CanClientFactory::instance();
-  EXPECT_TRUE(can_factory != nullptr);
+using apollo::common::ErrorCode;
 
-  can_factory->RegisterCanClients();
+TEST(kvaserCanClientTest, simple_test) {
+  CANCardParameter param;
+  param.set_brand(CANCardParameter::KVASER_CAN);
+  param.set_channel_id(CANCardParameter::CHANNEL_ID_ZERO);
 
-#if USE_ESD_CAN
-
-  CANCardParameter can_card_parameter;
-  can_card_parameter.set_brand(CANCardParameter::ESD_CAN);
-  can_card_parameter.set_type(CANCardParameter::PCI_CARD);
-  can_card_parameter.set_channel_id(CANCardParameter::CHANNEL_ID_ZERO);
-  EXPECT_TRUE(can_factory->CreateCANClient(can_card_parameter) != nullptr);
-
-#endif
-
-#if USE_KVASER_CAN
-
-  CANCardParameter can_card_parameter;
-  can_card_parameter.set_brand(CANCardParameter::KVASER_CAN);
-  can_card_parameter.set_type(CANCardParameter::PCI_CARD);
-  can_card_parameter.set_channel_id(CANCardParameter::CHANNEL_ID_ZERO);
-  EXPECT_TRUE(can_factory->CreateCANClient(can_card_parameter) != nullptr);
-
-#endif
-
+  kvaserCanClient kvaser_can_client;
+  EXPECT_TRUE(kvaser_can_client.Init(param));
+  EXPECT_EQ(kvaser_can_client.Start(), ErrorCode::CAN_CLIENT_ERROR_BASE);
+  std::vector<CanFrame> frames;
+  int32_t num = 0;
+  EXPECT_EQ(kvaser_can_client.Send(frames, &num),
+            ErrorCode::CAN_CLIENT_ERROR_SEND_FAILED);
+  EXPECT_EQ(kvaser_can_client.Receive(&frames, &num),
+            ErrorCode::CAN_CLIENT_ERROR_RECV_FAILED);
+  CanFrame can_frame;
+  frames.push_back(can_frame);
+  EXPECT_EQ(kvaser_can_client.SendSingleFrame(frames),
+            ErrorCode::CAN_CLIENT_ERROR_SEND_FAILED);
+  kvaser_can_client.Stop();
 
 }
 
+}  // namespace can
 }  // namespace canbus
 }  // namespace drivers
 }  // namespace apollo
