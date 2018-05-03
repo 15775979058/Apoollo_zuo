@@ -39,6 +39,12 @@
 #include "modules/perception/traffic_light/onboard/tl_preprocessor_subnode.h"
 #include "modules/perception/traffic_light/onboard/tl_proc_subnode.h"
 
+//-- Zuo added on 2018-05-03
+//-- Added camera subnode for frontLeft/frontRight
+#include "modules/perception/obstacle/onboard/camera_process_frontRight_subnode.h"
+#include "modules/perception/obstacle/onboard/camera_process_frontLeft_subnode.h"
+
+
 namespace apollo {
 namespace perception {
 
@@ -97,6 +103,11 @@ void Perception::RegistAllOnboardClass() {
   lowcostvisualizer::RegisterFactoryVisualizationSubnode();
   traffic_light::RegisterFactoryTLPreprocessorSubnode();
   traffic_light::RegisterFactoryTLProcSubnode();
+
+  //-- Zuo added on 2018-05-03
+  //-- Added camera subnode for frontLeft/frontRight
+  RegisterFactoryCameraProcessFrontLeftSubnode();
+  RegisterFactoryCameraProcessFrontRightSubnode();
 }
 
 Status Perception::Start() {

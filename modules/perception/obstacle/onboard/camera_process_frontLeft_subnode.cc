@@ -1,17 +1,6 @@
 /******************************************************************************
- * Copyright 2018 The Apollo Authors. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Zuo added on 2018-05-03
+ * Added camera subnode for frontLeft/frontRight
  *****************************************************************************/
 
 #include "modules/perception/obstacle/onboard/camera_process_frontLeft_subnode.h"
@@ -94,7 +83,7 @@ bool CameraProcessFrontLeftSubnode::InitModules() {
 }
 
 void CameraProcessFrontLeftSubnode::ImgCallback(const sensor_msgs::Image &message) {
-  double timestamp = message.header.stamp.toSec();
+/*  double timestamp = message.header.stamp.toSec();
   ADEBUG << "CameraProcessFrontLeftSubnode ImgCallback: timestamp: ";
   ADEBUG << std::fixed << std::setprecision(64) << timestamp;
   AINFO << "camera received image : " << GLOG_TIMESTAMP(timestamp)
@@ -151,6 +140,12 @@ void CameraProcessFrontLeftSubnode::ImgCallback(const sensor_msgs::Image &messag
   PERF_BLOCK_END("CameraProcessFrontLeftSubnode publish in DAG");
 
   if (publish_) PublishPerceptionPb(out_objs);
+*/
+
+  cv::Mat im;
+  MessageToMat(message, &im);
+  cv::imshow("frontLeft", im);
+  cv::waitKey(0);
 }
 
 void CameraProcessFrontLeftSubnode::ChassisCallback(
