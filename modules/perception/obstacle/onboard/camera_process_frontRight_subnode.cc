@@ -83,7 +83,7 @@ bool CameraProcessFrontRightSubnode::InitModules() {
 }
 
 void CameraProcessFrontRightSubnode::ImgCallback(const sensor_msgs::Image &message) {
-/*  double timestamp = message.header.stamp.toSec();
+  double timestamp = message.header.stamp.toSec();
   ADEBUG << "CameraProcessFrontRightSubnode ImgCallback: timestamp: ";
   ADEBUG << std::fixed << std::setprecision(64) << timestamp;
   AINFO << "camera received image : " << GLOG_TIMESTAMP(timestamp)
@@ -140,12 +140,18 @@ void CameraProcessFrontRightSubnode::ImgCallback(const sensor_msgs::Image &messa
   PERF_BLOCK_END("CameraProcessFrontRightSubnode publish in DAG");
 
   if (publish_) PublishPerceptionPb(out_objs);
-*/
 
-  cv::Mat im;
-  MessageToMat(message, &im);
-  cv::imshow("frontRight", im);
-  cv::waitKey(0);
+  //-- Zuo added on 2018-05-03
+  //-- Added camera subnode for frontLeft/frontRight
+  for(int i=0; i<objects.size(); i++){
+    cv::Point2f upper_left(objects.at(i)->upper_left.x(), objects.at(i)->upper_left.y());
+    cv::Point2f lower_right(objects.at(i)->lower_right.x(), objects.at(i)->lower_right.y());
+    cv::rectangle(img, upper_left, lower_right, cv::Scalar(0, 255, 0));
+  }
+  cv::resize(img, img, cv::Size(640, 480));
+  cv::imshow("frontRight", img);
+  cv::waitKey(1);
+
 }
 
 void CameraProcessFrontRightSubnode::ChassisCallback(
