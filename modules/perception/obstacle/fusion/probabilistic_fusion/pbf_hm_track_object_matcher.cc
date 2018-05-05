@@ -50,6 +50,7 @@ bool PbfHmTrackObjectMatcher::Match(
          << ", num of sensor objects = " << sensor_objects.size()
          << ", num of assignments = " << assignments->size();
 
+  //-- Zuo: association_mat里面存储了
   std::vector<std::vector<double>> association_mat;
   ComputeAssociationMat(fusion_tracks, sensor_objects,
                         *unassigned_fusion_tracks, *unassigned_sensor_objects,

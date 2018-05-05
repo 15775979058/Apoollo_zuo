@@ -45,6 +45,7 @@ void PbfBaseTrackObjectMatcher::IdAssign(
   size_t num_track = fusion_tracks.size();
   size_t num_obj = sensor_objects.size();
 
+  //-- Zuo: ??
   if (num_track == 0 || num_obj == 0) {
     unassigned_fusion_tracks->resize(num_track);
     unassigned_sensor_objects->resize(num_obj);
@@ -60,6 +61,8 @@ void PbfBaseTrackObjectMatcher::IdAssign(
 
   std::unordered_map<int, int> track_id_2_sensor_id;
   for (size_t i = 0; i < num_track; ++i) {
+    //-- Zuo: sensor_type: 传感器类型
+    //--      sensor_id:   同类型传感器的不同设备
     std::shared_ptr<PbfSensorObject> obj =
         fusion_tracks[i]->GetSensorObject(sensor_type, sensor_id);
     if (obj == nullptr) {

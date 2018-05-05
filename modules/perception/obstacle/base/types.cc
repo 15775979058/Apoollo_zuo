@@ -47,6 +47,7 @@ std::string GetObjectName(const ObjectType& obj_type) {
   return obj_name;
 }
 
+//-- Zuo: sensor_type --> sensor_id
 std::string GetSensorType(SensorType sensor_type) {
   switch (sensor_type) {
     case SensorType::VELODYNE_64:

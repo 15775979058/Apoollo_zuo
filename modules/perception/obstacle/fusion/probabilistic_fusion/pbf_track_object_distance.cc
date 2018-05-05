@@ -61,6 +61,7 @@ float PbfTrackObjectDistance::Compute(
   const std::shared_ptr<PbfSensorObject> &radar_object =
       fused_track->GetLatestRadarObject();
 
+  //-- Zuo: 为什么没有camera？
   if (FLAGS_use_navigation_mode) {
     if (FLAGS_use_distance_angle_fusion) {
       distance = ComputeDistanceAngleMatchProb(fused_object, sensor_object);
@@ -70,6 +71,9 @@ float PbfTrackObjectDistance::Compute(
   } else {
     if (is_lidar(sensor_type)) {
       if (lidar_object != nullptr) {
+
+        //-- Zuo: 函数ComputeVelodyne64Velodyne64和ComputeVelodyne64Radar仅有ADEBUG打印信息不同，都是求
+        //--    fused_object和sensor_object的polygon的中心的欧式距离
         distance = ComputeVelodyne64Velodyne64(fused_object, sensor_object,
                                                *ref_point);
       } else if (radar_object != nullptr) {
@@ -207,6 +211,7 @@ float PbfTrackObjectDistance::ComputeDistanceAngleMatchProb(
   return distance;
 }
 
+//-- Zuo: 先求得fused_poly和sensor_poly的中心（重心），然后求两中心欧氏距离
 float PbfTrackObjectDistance::ComputeDistance3D(
     const std::shared_ptr<PbfSensorObject> &fused_object,
     const std::shared_ptr<PbfSensorObject> &sensor_object,
@@ -248,12 +253,14 @@ float PbfTrackObjectDistance::ComputeDistance3D(
   return ComputeEuclideanDistance(fused_poly_center, sensor_poly_center);
 }
 
+//-- Zuo: 欧氏距离
 float PbfTrackObjectDistance::ComputeEuclideanDistance(
     const Eigen::Vector3d &des, const Eigen::Vector3d &src) {
   Eigen::Vector3d diff_pos = des - src;
   return std::sqrt(diff_pos.head(2).cwiseProduct(diff_pos.head(2)).sum());
 }
 
+//-- Zuo: 重心
 bool PbfTrackObjectDistance::ComputePolygonCenter(const PolygonDType &polygon,
                                                   Eigen::Vector3d *center) {
   CHECK_NOTNULL(center);

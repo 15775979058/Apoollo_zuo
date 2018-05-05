@@ -141,7 +141,8 @@ bool ProbabilisticFusion::Fuse(
         continue;
       }
 
-      //-- Zuo：publish_sensor_id_这里设置的是触发融合的传感器，当此传感器收到数据，则进行融合，这里设置的是voledyne_64
+      //-- Zuo：publish_sensor_id_这里设置的是触发融合的传感器 \
+      //-- 当此传感器收到数据，则进行融合，这里设置的是voledyne_64
       if (GetSensorType(multi_sensor_objects[i].sensor_type) ==
           publish_sensor_id_) {
         need_to_fusion = true;
@@ -153,12 +154,15 @@ bool ProbabilisticFusion::Fuse(
       }
     }
 
+    //-- Zuo：如果上述接收到非触发传感器的数据，则仅保存数据。
     if (!need_to_fusion) {
       sensor_data_rw_mutex_.unlock();
       return true;
     }
 
     // 2.query related sensor frames for fusion
+    //-- Zuo: frames存储了大概在相同timestamp下的不同设备的sensor_obj
+    //--   std::vector<PbfSensorFramePtr> frames;
     sensor_manager_->GetLatestFrames(fusion_time, &frames);
     sensor_data_rw_mutex_.unlock();
     AINFO << "Get " << frames.size() << " related frames for fusion";
@@ -189,6 +193,7 @@ void ProbabilisticFusion::FuseFrame(const PbfSensorFramePtr &frame) {
   std::vector<std::shared_ptr<PbfSensorObject>> &objects = frame->objects;
   std::vector<std::shared_ptr<PbfSensorObject>> background_objects;
   std::vector<std::shared_ptr<PbfSensorObject>> foreground_objects;
+  //-- Zuo: 将Obj按照前景、背景分拣
   DecomposeFrameObjects(objects, &foreground_objects, &background_objects);
 
   Eigen::Vector3d ref_point = frame->sensor2world_pose.topRightCorner(3, 1);
@@ -290,7 +295,7 @@ void ProbabilisticFusion::FuseForegroundObjects(
 
   std::vector<double> track2measurements_dist;
   std::vector<double> measurement2tracks_dist;
-  //-- Zuo： hm match
+  //-- Zuo: hm match
   matcher_->Match(tracks, *foreground_objects, options, &assignments,
                   &unassigned_tracks, &unassigned_objects,
                   &track2measurements_dist, &measurement2tracks_dist);
