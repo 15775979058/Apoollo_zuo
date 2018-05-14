@@ -42,7 +42,7 @@ void PbfSensor::QueryLatestFrames(const double time_stamp,
 }
 
 //-- Zuo: @return 返回最近一帧，且时间戳必须大于上一次返回的帧
-//-- WARN: frames_ 是FIFO，这里的循环是否可以优化？
+//-- TODO: frames_ 是FIFO，这里的循环是否可以优化？
 PbfSensorFramePtr PbfSensor::QueryLatestFrame(const double time_stamp) {
   PbfSensorFramePtr latest_frame = nullptr;
   for (size_t i = 0; i < frames_.size(); ++i) {

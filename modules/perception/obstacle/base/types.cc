@@ -47,7 +47,8 @@ std::string GetObjectName(const ObjectType& obj_type) {
   return obj_name;
 }
 
-//-- Zuo: sensor_type --> sensor_id
+//-- Zuo: 从sensor_type转到sensor_id，这里肯定是不对的，sensor_id是用来区分同类别但是不是同一个
+//--   传感器，而现在看来普遍使用的本函数，不能区分同一个type的不同id的设备。2018-05-11
 std::string GetSensorType(SensorType sensor_type) {
   switch (sensor_type) {
     case SensorType::VELODYNE_64:

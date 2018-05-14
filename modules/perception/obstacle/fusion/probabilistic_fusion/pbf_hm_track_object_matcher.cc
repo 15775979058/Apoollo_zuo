@@ -44,18 +44,23 @@ bool PbfHmTrackObjectMatcher::Match(
     return false;
   }
 
+  //-- Zuo: 根据fusion_tracks和sensor_objects的交集重新整理一下数据
+  //--   得出unassigned_fusion_tracks和unassigned_sensor_objects
+  //--   而这两个之间的元素匹配关系，就是后续的HM来做的。
+  //--   现在的assignments存储的是现有的交集的映射关系
   IdAssign(fusion_tracks, sensor_objects, assignments, unassigned_fusion_tracks,
            unassigned_sensor_objects);
   ADEBUG << "Num of fusion tracks = " << fusion_tracks.size()
          << ", num of sensor objects = " << sensor_objects.size()
          << ", num of assignments = " << assignments->size();
 
-  //-- Zuo: association_mat里面存储了
+  //-- Zuo: association_mat里面存储了fusion_tracks和sensor_objects重心的几何距离。
   std::vector<std::vector<double>> association_mat;
   ComputeAssociationMat(fusion_tracks, sensor_objects,
                         *unassigned_fusion_tracks, *unassigned_sensor_objects,
                         *(options.ref_point), &association_mat);
 
+  //-- Zuo: vector init 0
   track2measurements_dist->assign(fusion_tracks.size(), 0);
   measurement2track_dist->assign(sensor_objects.size(), 0);
 
@@ -73,6 +78,9 @@ bool PbfHmTrackObjectMatcher::Match(
     return true;
   }
 
+  //-- Zuo: @return 返回最优的匹配（匹配点距离和最小）关系
+  //--   并整理两个vector（unassigned_fusion_tracks/unassigned_sensor_objects）
+  //-- 整理: 将零散分布的未分配的（不等于-1）的unassigned_fusion_tracks/unassigned_sensor_objects集中放置到vector前列
   bool state = HmAssign(association_mat, assignments, unassigned_fusion_tracks,
                         unassigned_sensor_objects);
 
@@ -142,6 +150,7 @@ void PbfHmTrackObjectMatcher::ComputeAssociationMat(
       int sensor_idx = unassigned_sensor_objects[j];
       const std::shared_ptr<PbfSensorObject> &sensor_object =
           sensor_objects[sensor_idx];
+      //-- Zuo: 返回fusion_track和sensor_object重心之间的几何距离
       double distance =
           pbf_distance.Compute(fusion_track, sensor_object, options);
       ADEBUG << "sensor distance:" << distance;
@@ -150,14 +159,24 @@ void PbfHmTrackObjectMatcher::ComputeAssociationMat(
   }
 }
 
+//-- Zuo: 根据id操作
 bool PbfHmTrackObjectMatcher::HmAssign(
     const std::vector<std::vector<double>> &association_mat,
     std::vector<std::pair<int, int>> *assignments,
     std::vector<int> *unassigned_fusion_tracks,
     std::vector<int> *unassigned_sensor_objects) {
+
   double max_dist = s_max_match_distance_;
   std::vector<std::vector<int>> fusion_components;
   std::vector<std::vector<int>> sensor_components;
+  //-- Zuo: 如果association_mat中的distance小于max_dist，则认为两个对应的fusion_obj和sensor_obj是关联的，根据此点，
+  //--    将fusion_obj和sensor_obj分类，分成各自关联的小块，fusion_components和sensor_components。也即大的二分图被
+  //--  划分成许多小的二分图
+  //--    fusion_components.size() == sensor_components.size() 
+  //--    fusion_components[i].size() 不一定== sensor_components[i].size() 
+  //--  @return
+  //--      最终目的是生成映射关系assignments
+  //-- ？？
   ComputeConnectedComponents(association_mat, max_dist, &fusion_components,
                              &sensor_components);
 
@@ -170,6 +189,8 @@ bool PbfHmTrackObjectMatcher::HmAssign(
       continue;
     } else if (fusion_components[i].size() == 1 &&
                sensor_components[i].size() == 1) {
+
+      //-- Zuo: 此子二分图里面，左右图都仅有一个元素。将此匹配关系存储，并将两个unassignedXXX容器对应位关闭
       int idx_f = fusion_components[i][0];
       int idx_s = sensor_components[i][0];
       if (association_mat[idx_f][idx_s] < max_dist) {
@@ -200,12 +221,14 @@ bool PbfHmTrackObjectMatcher::HmAssign(
       }
     }
 
+    //-- Zuo: 在上述分出来的小块s二分图里面，找到一个最优匹配关系（Find an assignment which minimizes the total cost.）
     std::vector<int> fusion_idxs;
     std::vector<int> sensor_idxs;
     if (loc_mat.size() != 0 && loc_mat[0].size() != 0) {
       MinimizeAssignment(loc_mat, &fusion_idxs, &sensor_idxs);
     }
 
+    //-- Zuo: 将上面求出来的最优匹配关系存储
     for (size_t j = 0; j < fusion_idxs.size(); ++j) {
       int f_idx = fusion_idxs[j];
       int s_idx = sensor_idxs[j];
@@ -221,6 +244,8 @@ bool PbfHmTrackObjectMatcher::HmAssign(
     }
   }
 
+  //-- Zuo: 将形单影只（未匹配上）的unassigned_fusion_track和unassigned_sensor_object进行整理，重新从头放置在
+  //--   unassigned_fusion_tracks和unassigned_sensor_objects两个vector内，覆盖已经匹配好的。
   int unassigned_fusion_num = 0;
   for (size_t i = 0; i < unassigned_fusion_tracks->size(); ++i) {
     if ((*unassigned_fusion_tracks)[i] >= 0) {
@@ -269,6 +294,8 @@ void PbfHmTrackObjectMatcher::ComputeConnectedComponents(
     no_obj = association_mat[0].size();
   }
 
+  //-- Zuo: 将二分图左右子图存储到一个vector，分为前后两部分。将所有有有关联的双方归类存储。
+  //--  eg: nb_graph[0]存储的是所有和fusion_tracks[0]有关联的sensor_object
   std::vector<std::vector<int>> nb_graph;
   nb_graph.resize(no_track + no_obj);
   for (int i = 0; i < no_track; i++) {
@@ -281,7 +308,11 @@ void PbfHmTrackObjectMatcher::ComputeConnectedComponents(
   }
 
   std::vector<std::vector<int>> components;
+  //-- Zuo: 将所有的tracks和sensors分块，分成各自的封闭小块
+  //-- Note: 输出的components没有将tracks和sensors进行区分
   ConnectedComponentAnalysis(nb_graph, &components);
+
+  //-- Zuo: 对上面合并成单个vector的components分拣成tracks和sensors
   track_components->clear();
   track_components->resize(components.size());
   obj_components->clear();

@@ -15,8 +15,6 @@ cc_library(
         "//modules/perception/common",
         "//modules/perception/lib/base",
         "//modules/perception/obstacle/onboard:camera_subnode",
-        "//modules/perception/obstacle/onboard:camera_frontLeft_subnode",
-        "//modules/perception/obstacle/onboard:camera_frontRight_subnode",
         "//modules/perception/obstacle/onboard:cipv_subnode",
         "//modules/perception/obstacle/onboard:fusion_subnode",
         "//modules/perception/obstacle/onboard:lane_post_processing_subnode",

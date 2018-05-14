@@ -32,6 +32,11 @@ double PbfBaseTrackObjectMatcher::GetMaxMatchDistance() {
   return s_max_match_distance_;
 }
 
+//-- Zuo: 通过判断fusion_tracks和sensor_objects的交集，将数据重新分配一下
+//--   fusion_tracks: 原有的跟踪Obj集合
+//--   sensor_objects: 现有的传感器Obj数据
+//--   assignments: 交集的元素映射关系
+//--   unassigned_fusion_tracks和unassigned_sensor_objects交集以外的两部分
 void PbfBaseTrackObjectMatcher::IdAssign(
     const std::vector<PbfTrackPtr> &fusion_tracks,
     const std::vector<std::shared_ptr<PbfSensorObject>> &sensor_objects,
@@ -45,10 +50,10 @@ void PbfBaseTrackObjectMatcher::IdAssign(
   size_t num_track = fusion_tracks.size();
   size_t num_obj = sensor_objects.size();
 
-  //-- Zuo: ??
   if (num_track == 0 || num_obj == 0) {
     unassigned_fusion_tracks->resize(num_track);
     unassigned_sensor_objects->resize(num_obj);
+    //-- Zuo: 批量递增赋值 ++
     std::iota(unassigned_fusion_tracks->begin(),
               unassigned_fusion_tracks->end(), 0);
     std::iota(unassigned_sensor_objects->begin(),
@@ -63,14 +68,20 @@ void PbfBaseTrackObjectMatcher::IdAssign(
   for (size_t i = 0; i < num_track; ++i) {
     //-- Zuo: sensor_type: 传感器类型
     //--      sensor_id:   同类型传感器的不同设备
+    //-- 下标映射：fusion_tracks（现有的跟踪集合）中对应（sensor_type, sensor_id）的下标  和  其track_id的下标映射
+    //--    用来在下面，判断是否此目标已经被跟踪了
+    //-- ？？
     std::shared_ptr<PbfSensorObject> obj =
         fusion_tracks[i]->GetSensorObject(sensor_type, sensor_id);
     if (obj == nullptr) {
       continue;
     }
+    //-- Zuo: 将fusion_tracks和sensor_objects是否存在交集，如果有，则将交集的映射关系存储在下
     track_id_2_sensor_id[obj->object->track_id] = i;
   }
 
+  //-- Zuo: 对于fusion_tracks和sensor_objects的交集以外的数据
+  //--  分别存放在unassigned_fusion_tracks和unassigned_sensor_objects
   std::vector<bool> fusion_used(num_track, false);
   std::vector<bool> sensor_used(num_obj, false);
   for (size_t i = 0; i < num_obj; ++i) {
@@ -79,16 +90,19 @@ void PbfBaseTrackObjectMatcher::IdAssign(
     if (it != track_id_2_sensor_id.end()) {
       sensor_used[i] = true;
       fusion_used[it->second] = true;
+      //-- Zuo: 交集的元素映射关系
       assignments->emplace_back(it->second, i);
     }
   }
 
+  //-- Zuo: unassigned_fusion_tracks == !fusion_used ??
   for (size_t i = 0; i < fusion_used.size(); ++i) {
     if (!fusion_used[i]) {
       unassigned_fusion_tracks->push_back(i);
     }
   }
 
+  //-- Zuo: unassigned_sensor_objects == !sensor_used ??
   for (size_t i = 0; i < sensor_used.size(); ++i) {
     if (!sensor_used[i]) {
       unassigned_sensor_objects->push_back(i);

@@ -161,7 +161,7 @@ bool ProbabilisticFusion::Fuse(
     }
 
     // 2.query related sensor frames for fusion
-    //-- Zuo: frames存储了大概在相同timestamp下的不同设备的sensor_obj
+    //-- Zuo: frames存储了相同timestamp周围下的不同设备的sensor_obj，这个周围取决于fusion的周期长度
     //--   std::vector<PbfSensorFramePtr> frames;
     sensor_manager_->GetLatestFrames(fusion_time, &frames);
     sensor_data_rw_mutex_.unlock();
@@ -171,6 +171,8 @@ bool ProbabilisticFusion::Fuse(
   {
     fusion_mutex_.lock();
     // 3.peform fusion on related frames
+    //-- Zuo: frame不同成员代表不同传感器的最新帧
+    //--    虽然融合以后在track里面不分你我，但是在融合阶段还是不同传感器分开和track_obj匹配的。
     for (size_t i = 0; i < frames.size(); ++i) {
       FuseFrame(frames[i]);
     }
@@ -295,17 +297,19 @@ void ProbabilisticFusion::FuseForegroundObjects(
 
   std::vector<double> track2measurements_dist;
   std::vector<double> measurement2tracks_dist;
-  //-- Zuo: hm match
+  //-- Zuo: 用HM匹配，得出foreground_objects和tracks的映射关系assignments
+  //--   options??
   matcher_->Match(tracks, *foreground_objects, options, &assignments,
                   &unassigned_tracks, &unassigned_objects,
                   &track2measurements_dist, &measurement2tracks_dist);
 
   ADEBUG << "fg_track_cnt = " << tracks.size()
          << ", fg_obj_cnt = " << foreground_objects->size()
-         << ", assignement = " << assignments.size()
+         << ", assignment = " << assignments.size()
          << ", unassigned_track_cnt = " << unassigned_tracks.size()
          << ", unassigned_obj_cnt = " << unassigned_objects.size();
 
+  //-- Zuo: 根据匹配关系，将tracks和foreground_objects对应的匹配对用kalman进行融合，然后用融合后的Obj更行Tracks
   UpdateAssignedTracks(&tracks, *foreground_objects, assignments,
                        track2measurements_dist);
 

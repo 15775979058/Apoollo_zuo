@@ -131,66 +131,6 @@ cc_library(
 )
 
 cc_library(
-    name = "camera_frontLeft_subnode",
-    srcs = [
-        "camera_process_frontLeft_subnode.cc",
-    ],
-    hdrs = [
-        "camera_process_frontLeft_subnode.h",
-        "object_shared_data.h",
-    ],
-    deps = [
-        ":perception_obstacle_shared_data",
-        "//modules/common:log",
-        "//modules/common/adapters:adapter_manager",
-        "//modules/common/time",
-        "//modules/perception/common",
-        "//modules/perception/lib/config_manager",
-        "//modules/perception/obstacle/camera/converter",
-        "//modules/perception/obstacle/camera/detector/yolo_camera_detector",
-        "//modules/perception/obstacle/camera/dummy",
-        "//modules/perception/obstacle/camera/filter",
-        "//modules/perception/obstacle/camera/tracker",
-        "//modules/perception/obstacle/camera/transformer",
-        "//modules/perception/onboard",
-        "//modules/perception/traffic_light/util",
-        "@eigen",
-        "@opencv2//:core",
-        "@ros//:ros_common",
-    ],
-)
-
-cc_library(
-    name = "camera_frontRight_subnode",
-    srcs = [
-        "camera_process_frontRight_subnode.cc",
-    ],
-    hdrs = [
-        "camera_process_frontRight_subnode.h",
-        "object_shared_data.h",
-    ],
-    deps = [
-        ":perception_obstacle_shared_data",
-        "//modules/common:log",
-        "//modules/common/adapters:adapter_manager",
-        "//modules/common/time",
-        "//modules/perception/common",
-        "//modules/perception/lib/config_manager",
-        "//modules/perception/obstacle/camera/converter",
-        "//modules/perception/obstacle/camera/detector/yolo_camera_detector",
-        "//modules/perception/obstacle/camera/dummy",
-        "//modules/perception/obstacle/camera/filter",
-        "//modules/perception/obstacle/camera/tracker",
-        "//modules/perception/obstacle/camera/transformer",
-        "//modules/perception/onboard",
-        "//modules/perception/traffic_light/util",
-        "@eigen",
-        "@opencv2//:core",
-        "@ros//:ros_common",
-    ],
-)
-
-cc_library(
     name = "fusion_subnode",
     srcs = [
         "async_fusion_subnode.cc",

@@ -141,6 +141,7 @@ float PbfTrackObjectDistance::GetAngle(const std::shared_ptr<Object> &obj) {
   return std::atan2(obj->center[1], obj->center[0]);
 }
 
+//-- Zuo: 当前的权重设置有何目的
 float PbfTrackObjectDistance::ComputeDistanceAngleMatchProb(
     const std::shared_ptr<PbfSensorObject> &fused_object,
     const std::shared_ptr<PbfSensorObject> &sensor_object) {
@@ -184,6 +185,7 @@ float PbfTrackObjectDistance::ComputeDistanceAngleMatchProb(
     }
   }
 
+  //-- Zuo: 夹角 (角度)
   float sangle = GetAngle(sobj);
   float fangle = GetAngle(fobj);
   angle_distance_diff = (std::abs(sangle - fangle) * 180) / M_PI;
@@ -192,7 +194,7 @@ float PbfTrackObjectDistance::ComputeDistanceAngleMatchProb(
 
   if (is_radar(sensor_object->sensor_type)) {
     double svelocity = sobj->velocity.norm();
-    double fvelocity = fobj->velocity.norm();
+    double fvelocity = fobj->velocity.norm(); //-- Zuo: 模?
     if (svelocity > 0.0 && fvelocity > 0.0) {
       float cos_distance =
           sobj->velocity.dot(fobj->velocity) / (svelocity * fvelocity);
@@ -202,6 +204,7 @@ float PbfTrackObjectDistance::ComputeDistanceAngleMatchProb(
       }
     }
 
+    //-- Zuo: 要求radar目标速度差异小于5m
     if (std::abs(svelocity - fvelocity) > speed_diff ||
         angle_distance_diff > angle_tolerance) {
       ADEBUG << "ignore radar data for fusing" << speed_diff;

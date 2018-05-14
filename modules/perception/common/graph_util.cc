@@ -24,7 +24,7 @@ namespace perception {
 
 void ConnectedComponentAnalysis(const std::vector<std::vector<int>>& graph,
                                 std::vector<std::vector<int>>* components) {
-  int no_item = graph.size();
+  int no_item = graph.size(); //-- Zuo: 整个二分图所有元素个数
   std::vector<int> visited;
   visited.resize(no_item, 0);
   std::queue<int> que;

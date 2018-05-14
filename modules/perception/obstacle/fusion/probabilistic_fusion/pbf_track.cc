@@ -112,6 +112,7 @@ void PbfTrack::UpdateWithSensorObject(std::shared_ptr<PbfSensorObject> obj,
     PerformMotionFusion(obj);
   }
 
+  //-- Zuo: 将融合后的obj根据sensor_type分类存储
   if (is_lidar(sensor_type)) {
     lidar_objects_[sensor_id] = obj;
     invisible_in_lidar_ = false;
@@ -123,6 +124,8 @@ void PbfTrack::UpdateWithSensorObject(std::shared_ptr<PbfSensorObject> obj,
     invisible_in_camera_ = false;
   }
 
+  //-- Zuo: 根据timestamp的时间差跟新缓存区。删除很久以前的
+  //--   eg: double PbfTrack::s_max_camera_invisible_period_ = 0.25;
   double timestamp = obj->timestamp;
   UpdateMeasurementsLifeWithMeasurement(&lidar_objects_, sensor_id, timestamp,
                                         s_max_lidar_invisible_period_);

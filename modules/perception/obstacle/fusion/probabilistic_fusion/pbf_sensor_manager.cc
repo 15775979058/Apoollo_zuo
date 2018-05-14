@@ -68,9 +68,9 @@ bool PbfSensorManager::Init() {
   return true;
 }
 
-//-- Zuo: 将Object按照不同的sensor分开存储在变量sensors_里面。
-//--   /**@brief sensor_id based key*/
+//-- Zuo: 将Object按照不同的sensor_id分开存储在变量sensors_里面。
 //--  std::map<std::string, PbfSensor *> sensors_;
+//--  PbfSensor 包含deque(FIFO)
 void PbfSensorManager::AddSensorMeasurements(const SensorObjects &objects) {
   std::string sensor_id = GetSensorType(objects.sensor_type);
   SensorType type = objects.sensor_type;
@@ -116,8 +116,8 @@ void PbfSensorManager::GetLatestSensorFrames(
  * 也就是说，这一部分整体的架构：map+deque(FIFO)，不同的设备按照sensor_id区分存储在
  * map中不同的值PbfSensor中，每个值PbfSensor中都有一个deque按照timestamp存储数据。
  * @return 
- *    frame里面存储的是每一个传感器的当前帧。如果传感器刷新速度慢的话，上一帧还未刷新
- * 则不参与本次融合。
+ *    如果传感器刷新速度慢的话，上一帧还未刷新，则不参与本次融合。
+ *    frame不同成员代表不同传感器的最新帧
  */
 void PbfSensorManager::GetLatestFrames(const double time_stamp,
                                        std::vector<PbfSensorFramePtr> *frames) {
@@ -133,7 +133,7 @@ void PbfSensorManager::GetLatestFrames(const double time_stamp,
     }
   }
 
-  //-- Zuo: 根据时间戳按照升序排列
+  //-- Zuo: 根据时间戳按照升序排列， lambda函数设置sort比较函数
   std::sort(frames->begin(), frames->end(),
             [](const PbfSensorFramePtr &p1, const PbfSensorFramePtr &p2) {
               return p1->timestamp < p2->timestamp;
