@@ -272,6 +272,7 @@ void PbfTrack::PerformMotionFusion(std::shared_ptr<PbfSensorObject> obj) {
         motion_fusion_->UpdateWithObject(obj, time_diff);
         Eigen::Vector3d anchor_point;
         Eigen::Vector3d velocity;
+
         // use radar position and velocity
         if (is_radar(sensor_type)) {
           motion_fusion_->SetState(obj->object->center, obj->object->velocity);

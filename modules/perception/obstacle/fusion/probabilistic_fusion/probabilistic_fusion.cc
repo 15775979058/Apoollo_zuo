@@ -141,7 +141,7 @@ bool ProbabilisticFusion::Fuse(
         continue;
       }
 
-      //-- Zuo：publish_sensor_id_这里设置的是触发融合的传感器 \
+      //-- Zuo：publish_sensor_id_这里设置的是触发融合的传感器
       //-- 当此传感器收到数据，则进行融合，这里设置的是voledyne_64
       if (GetSensorType(multi_sensor_objects[i].sensor_type) ==
           publish_sensor_id_) {

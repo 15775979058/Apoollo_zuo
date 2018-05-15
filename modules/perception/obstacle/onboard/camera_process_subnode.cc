@@ -131,12 +131,15 @@ void CameraProcessSubnode::ImgCallback(const sensor_msgs::Image &message) {
   converter_->Convert(&objects);
   PERF_BLOCK_END("CameraProcessSubnode_converter_");
 
+  //-- Zuo: 根据外参，坐标转换
   transformer_->Transform(&objects);
   PERF_BLOCK_END("CameraProcessSubnode_transformer_");
 
+  //-- Zuo: 使用kcf跟踪，得出track_id
   tracker_->Associate(img, timestamp, &objects);
   PERF_BLOCK_END("CameraProcessSubnode_tracker_");
 
+  //-- Zuo: 根据上面kcf的track_id，对相同的obj前后帧进行kalman求速度
   filter_->Filter(timestamp, &objects);
   PERF_BLOCK_END("CameraProcessSubnode_filter_");
 
@@ -212,6 +215,7 @@ void CameraProcessSubnode::VisualObjToSensorObj(
     obj->tracking_time = vobj->track_age;
     obj->latest_tracked_time = vobj->last_track_timestamp;
     obj->velocity = vobj->velocity.cast<double>();
+
     obj->anchor_point = obj->center;
     obj->state_uncertainty = vobj->state_uncertainty;
 
@@ -267,6 +271,11 @@ void CameraProcessSubnode::PublishPerceptionPb(
   for (auto obstacle : obstacles.perception_obstacle()) {
     obstacle.mutable_velocity()->set_x(obstacle.velocity().x() +
                                        chassis_.speed_mps());
+
+    //-- Zuo added on 2018-05-14
+    AINFO << "Zuo print: obj's velocity obstacle = " << obstacle.velocity().x() << " , " << obstacle.velocity().y();
+    //-- Zuo added on 2018-05-14
+                         
   }
 
   common::adapter::AdapterManager::PublishPerceptionObstacles(obstacles);
