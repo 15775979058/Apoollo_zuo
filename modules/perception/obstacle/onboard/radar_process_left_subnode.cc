@@ -14,7 +14,7 @@
  * limitations under the License.
  *****************************************************************************/
 
-#include "modules/perception/obstacle/onboard/radar_process_subnode.h"
+#include "modules/perception/obstacle/onboard/radar_process_left_subnode.h"
 
 #include <algorithm>
 #include <string>
@@ -47,7 +47,7 @@ using pcl_util::PointD;
 using std::string;
 using std::unordered_map;
 
-bool RadarProcessSubnode::InitInternal() {
+bool RadarProcessLeftSubnode::InitInternal() {
   if (inited_) {
     return true;
   }
@@ -76,14 +76,18 @@ bool RadarProcessSubnode::InitInternal() {
   }
   device_id_ = reserve_field_map["device_id"];
 
+  //-- @Zuo 2018-05-16
+  AINFO << "radar_left device_id = " << device_id_;
+
   CHECK(AdapterManager::GetContiRadar()) << "Radar is not initialized.";
-  AdapterManager::AddContiRadarCallback(&RadarProcessSubnode::OnRadar, this);
+  AdapterManager::AddContiRadarCallback(&RadarProcessLeftSubnode::OnRadar, this);
   CHECK(AdapterManager::GetLocalization()) << "Localiztion is not initialized.";
-  AdapterManager::AddLocalizationCallback(&RadarProcessSubnode::OnLocalization,
+  AdapterManager::AddLocalizationCallback(&RadarProcessLeftSubnode::OnLocalization,
                                           this);
   localization_buffer_.set_capacity(FLAGS_localization_buffer_size);
-  std::string radar_extrinstic_path = FLAGS_radar_extrinsic_file;
-  AINFO << "radar extrinsic path: " << radar_extrinstic_path;
+
+  std::string radar_extrinstic_path = FLAGS_radar_left_extrinsic_file;
+  AINFO << "radar_left extrinsic path: " << radar_extrinstic_path;
   Eigen::Affine3d radar_extrinsic;
   if (!LoadExtrinsic(radar_extrinstic_path, &radar_extrinsic)) {
     AERROR << "Failed to load extrinsic.";
@@ -107,7 +111,7 @@ bool RadarProcessSubnode::InitInternal() {
   return true;
 }
 
-void RadarProcessSubnode::OnRadar(const ContiRadar &radar_obs) {
+void RadarProcessLeftSubnode::OnRadar(const ContiRadar &radar_obs) {
   PERF_FUNCTION("RadarProcess");
   ContiRadar radar_obs_proto = radar_obs;
   double timestamp = radar_obs_proto.header().timestamp_sec();
@@ -159,7 +163,7 @@ void RadarProcessSubnode::OnRadar(const ContiRadar &radar_obs) {
     CameraCalibrationPtr calibrator = config_manager->get_camera_calibration();
     // Eigen::Matrix4d camera_to_car = calibrator->get_camera_extrinsics();
     *radar2car_pose = radar_extrinsic_;
-    AINFO << "get radar trans pose succ. pose: \n" << *radar2car_pose;
+    AINFO << "get radar_left trans pose succ. pose: \n" << *radar2car_pose;
   }
 
   std::vector<PolygonDType> map_polygons;
@@ -219,6 +223,10 @@ void RadarProcessSubnode::OnRadar(const ContiRadar &radar_obs) {
            << "]";
     return;
   }
+
+  //-- @Zuo 2018-05-15
+  AINFO << "detected radar obj size = " << radar_objects->objects.size();
+
   PERF_BLOCK_END("radar_detect");
   PublishDataAndEvent(timestamp, radar_objects);
 
@@ -232,7 +240,7 @@ void RadarProcessSubnode::OnRadar(const ContiRadar &radar_obs) {
   return;
 }
 
-void RadarProcessSubnode::OnLocalization(
+void RadarProcessLeftSubnode::OnLocalization(
     const apollo::localization::LocalizationEstimate &localization) {
   double timestamp = localization.header().timestamp_sec();
   ADEBUG << "localization timestamp:" << GLOG_TIMESTAMP(timestamp);
@@ -242,7 +250,7 @@ void RadarProcessSubnode::OnLocalization(
   localization_buffer_.push_back(localization_pair);
 }
 
-bool RadarProcessSubnode::GetCarLinearSpeed(double timestamp,
+bool RadarProcessLeftSubnode::GetCarLinearSpeed(double timestamp,
                                             Eigen::Vector3f *car_linear_speed) {
   MutexLock lock(&mutex_);
   if (car_linear_speed == nullptr) {
@@ -284,12 +292,12 @@ bool RadarProcessSubnode::GetCarLinearSpeed(double timestamp,
   return true;
 }
 
-void RadarProcessSubnode::RegistAllAlgorithm() {
+void RadarProcessLeftSubnode::RegistAllAlgorithm() {
   RegisterFactoryDummyRadarDetector();
   RegisterFactoryModestRadarDetector();
 }
 
-bool RadarProcessSubnode::InitFrameDependence() {
+bool RadarProcessLeftSubnode::InitFrameDependence() {
   /// init share data
   CHECK(shared_data_manager_ != nullptr) << "shared_data_manager_ is nullptr";
   // init preprocess_data
@@ -319,7 +327,7 @@ bool RadarProcessSubnode::InitFrameDependence() {
   return true;
 }
 
-bool RadarProcessSubnode::InitAlgorithmPlugin() {
+bool RadarProcessLeftSubnode::InitAlgorithmPlugin() {
   /// init roi filter
   roi_filter_.reset(new HdmapROIFilter());
   if (!roi_filter_->Init()) {
@@ -345,7 +353,7 @@ bool RadarProcessSubnode::InitAlgorithmPlugin() {
   return true;
 }
 
-void RadarProcessSubnode::PublishDataAndEvent(
+void RadarProcessLeftSubnode::PublishDataAndEvent(
     double timestamp, const SharedDataPtr<SensorObjects> &data) {
   // set shared data
   std::string key;

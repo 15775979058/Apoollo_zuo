@@ -126,6 +126,17 @@ bool FusionSubnode::InitOutputStream() {
     radar_event_id_ = static_cast<EventID>(atoi((radar_iter->second).c_str()));
   }
 
+  //-- @Zuo: 从dag配置文件读取radar_left_event_id 2018-05-16
+  auto radar_left_iter = reserve_field_map.find("radar_left_event_id");
+  if (radar_left_iter == reserve_field_map.end()) {
+    AWARN << "Failed to find radar_left_event_id:" << reserve_;
+    AINFO << "radar_left_event_id_ will be set -1";
+    radar_left_event_id_ = -1;
+  } else {
+    radar_left_event_id_ = static_cast<EventID>(atoi((radar_left_iter->second).c_str()));
+    AINFO << "output radar_left_event_id_ = " << radar_left_event_id_;
+  }
+
   auto camera_iter = reserve_field_map.find("camera_event_id");
   if (camera_iter == reserve_field_map.end()) {
     AWARN << "Failed to find camera_event_id:" << reserve_;
@@ -280,6 +291,8 @@ bool FusionSubnode::BuildSensorObjs(
     sensor_objects->timestamp = event.timestamp;
     if (event.event_id == lidar_event_id_) {
       sensor_objects->sensor_type = SensorType::VELODYNE_64;
+    } else if (event.event_id == radar_left_event_id_) { //-- @Zuo 根据sensor_id设置sensor_type
+      sensor_objects->sensor_type = SensorType::RADAR;
     } else if (event.event_id == radar_event_id_) {
       sensor_objects->sensor_type = SensorType::RADAR;
     } else if (event.event_id == camera_event_id_) {
@@ -288,7 +301,14 @@ bool FusionSubnode::BuildSensorObjs(
       AERROR << "Event id is not supported. event:" << event.to_string();
       return false;
     }
-    sensor_objects->sensor_id = GetSensorType(sensor_objects->sensor_type);
+    
+    //-- @Zuo: 用sensor_id替换sensor_type 2018-05-16
+    // sensor_objects->sensor_id = GetSensorType(sensor_objects->sensor_type);
+    sensor_objects->sensor_id = sensor_objects->sensor_id;
+
+    //-- @Zuo: 2018-05-16
+    AINFO << "sensor_objects->sensor_id = " << sensor_objects->sensor_id;
+
     multi_sensor_objs->push_back(*sensor_objects);
     ADEBUG << "get sensor objs:" << sensor_objects->ToString();
   }
@@ -309,6 +329,9 @@ bool FusionSubnode::GetSharedData(const Event &event,
   if (event.event_id == lidar_event_id_ && lidar_object_data_ != nullptr) {
     get_data_succ = lidar_object_data_->Get(data_key, objs);
   } else if (event.event_id == radar_event_id_ &&
+             radar_object_data_ != nullptr) {
+    get_data_succ = radar_object_data_->Get(data_key, objs);
+  } else if (event.event_id == radar_left_event_id_ && //-- @Zuo: radar_left_event_id
              radar_object_data_ != nullptr) {
     get_data_succ = radar_object_data_->Get(data_key, objs);
   } else if (event.event_id == camera_event_id_ &&

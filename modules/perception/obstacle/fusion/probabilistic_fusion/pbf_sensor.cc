@@ -59,7 +59,11 @@ void PbfSensor::AddFrame(const SensorObjects &frame) {
   pbf_frame->timestamp = frame.timestamp;
   pbf_frame->sensor2world_pose = frame.sensor2world_pose;
   pbf_frame->sensor_type = frame.sensor_type;
-  pbf_frame->sensor_id = GetSensorType(frame.sensor_type);
+
+  //-- @Zuo: 用sensor_id替换sensor_type
+  // pbf_frame->sensor_id = GetSensorType(frame.sensor_type);
+  pbf_frame->sensor_id = frame.sensor_id;
+
   pbf_frame->seq_num = frame.seq_num;
 
   pbf_frame->objects.resize(frame.objects.size());
@@ -68,7 +72,11 @@ void PbfSensor::AddFrame(const SensorObjects &frame) {
     obj->timestamp = frame.timestamp;
     obj->sensor_type = frame.sensor_type;
     obj->object->clone(*(frame.objects[i]));
-    obj->sensor_id = GetSensorType(frame.sensor_type);
+
+    //-- @Zuo: 用sensor_id替换sensor_type
+    // obj->sensor_id = GetSensorType(frame.sensor_type);
+    obj->sensor_id = frame.sensor_id;
+
     pbf_frame->objects[i] = obj;
   }
   if (frames_.size() > s_max_cached_frame_number_) {

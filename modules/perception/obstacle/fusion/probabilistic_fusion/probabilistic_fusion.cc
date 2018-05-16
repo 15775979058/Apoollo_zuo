@@ -127,10 +127,18 @@ bool ProbabilisticFusion::Fuse(
     // 1. collect sensor objects data
     for (size_t i = 0; i < multi_sensor_objects.size(); ++i) {
       auto sensor_type = multi_sensor_objects[i].sensor_type;
-      AINFO << "add sensor measurement: " << GetSensorType(sensor_type)
-            << ", obj_cnt : " << multi_sensor_objects[i].objects.size() << ", "
-            << std::fixed << std::setprecision(12)
-            << multi_sensor_objects[i].timestamp;
+
+      auto sensor_id = multi_sensor_objects[i].sensor_id;
+      //-- @Zuo 2018-05-16
+      // AINFO << "add sensor measurement: " << GetSensorType(sensor_type)
+      //       << ", obj_cnt : " << multi_sensor_objects[i].objects.size() << ", "
+      //       << std::fixed << std::setprecision(12)
+      //       << multi_sensor_objects[i].timestamp;
+      AINFO << "add sensor measurement: " << sensor_id
+      << ", obj_cnt : " << multi_sensor_objects[i].objects.size() << ", "
+      << std::fixed << std::setprecision(12)
+      << multi_sensor_objects[i].timestamp;
+      
       if (is_lidar(sensor_type) && !use_lidar_) {
         continue;
       }
@@ -141,9 +149,9 @@ bool ProbabilisticFusion::Fuse(
         continue;
       }
 
-      //-- Zuo：publish_sensor_id_这里设置的是触发融合的传感器，当此传感器收到数据，则进行融合，这里设置的是voledyne_64
-      if (GetSensorType(multi_sensor_objects[i].sensor_type) ==
-          publish_sensor_id_) {
+      //-- @Zuo：publish_sensor_id_这里设置的是触发融合的传感器，当此传感器收到数据，则进行融合，这里设置的是voledyne_64
+      //-- @Zuo: 用sensor_id替换原有的GetSensorType(sensor_type)，来增加多个Radar
+      if ( sensor_id == publish_sensor_id_ ) {
         need_to_fusion = true;
         fusion_time = multi_sensor_objects[i].timestamp;
         started_ = true;
@@ -242,7 +250,9 @@ void ProbabilisticFusion::CollectFusedObjects(
   int fg_obj_num = 0;
   std::vector<PbfTrackPtr> &tracks = track_manager_->GetTracks();
   for (size_t i = 0; i < tracks.size(); i++) {
-    if (tracks[i]->AbleToPublish()) {
+
+    //-- @Zuo: 暂时注释过滤radar，用来看效果 2018-05-16
+     /*if (tracks[i]->AbleToPublish())*/ {
       std::shared_ptr<PbfSensorObject> fused_object =
           tracks[i]->GetFusedObject();
       std::shared_ptr<Object> obj(new Object());
@@ -307,8 +317,16 @@ void ProbabilisticFusion::FuseForegroundObjects(
   UpdateUnassignedTracks(&tracks, unassigned_tracks, track2measurements_dist,
                          sensor_type, sensor_id, timestamp);
 
+
+  //-- @Zuo: 2018-05-16
+  AINFO << "assignments size = " << assignments.size();
+  if( sensor_id == "radar_front" || sensor_id == "radar_left" ) {
+    AINFO << "after HM match = " << sensor_id;
+  }
+
   if (FLAGS_use_navigation_mode) {
-    if (is_camera(sensor_type)) {
+    //-- @Zuo: 暂时注释过滤radar，用来看效果 2018-05-16
+    /*if (is_camera(sensor_type))*/ {
       CreateNewTracks(*foreground_objects, unassigned_objects);
     }
   } else {

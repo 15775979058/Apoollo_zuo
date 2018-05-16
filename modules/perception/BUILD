@@ -2,6 +2,7 @@ load("//tools:cpplint.bzl", "cpplint")
 
 package(default_visibility = ["//visibility:public"])
 
+## @Zuo added a radar_left_subnode on 2018-05-15
 cc_library(
     name = "perception_lib",
     srcs = ["perception.cc"],
@@ -21,6 +22,7 @@ cc_library(
         "//modules/perception/obstacle/onboard:lidar_subnode",
         "//modules/perception/obstacle/onboard:perception_obstacle_shared_data",
         "//modules/perception/obstacle/onboard:radar_subnode",
+        "//modules/perception/obstacle/onboard:radar_left_subnode",
         "//modules/perception/obstacle/onboard:visualization_subnode",
         "//modules/perception/onboard",
         "//modules/perception/proto:perception_proto",
