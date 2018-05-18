@@ -304,7 +304,7 @@ bool FusionSubnode::BuildSensorObjs(
     
     //-- @Zuo: 用sensor_id替换sensor_type 2018-05-16
     // sensor_objects->sensor_id = GetSensorType(sensor_objects->sensor_type);
-    sensor_objects->sensor_id = sensor_objects->sensor_id;
+    // sensor_objects->sensor_id = events->sensor_id;
 
     //-- @Zuo: 2018-05-16
     AINFO << "sensor_objects->sensor_id = " << sensor_objects->sensor_id;

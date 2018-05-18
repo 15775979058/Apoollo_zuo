@@ -78,6 +78,7 @@ bool PbfHmTrackObjectMatcher::Match(
   for (const auto &track_measurement_pair : *assignments) {
     const int track_ind = track_measurement_pair.first;
     const int measurement_ind = track_measurement_pair.second;
+    //-- @Zuo 2018-05-18 打开这里可以判断新增的Radar的数据是否进来
     ADEBUG << "track_ind is matched to measurement_ind for sensor "
            << sensor_objects[0]->sensor_id << " " << track_ind << " "
            << measurement_ind;

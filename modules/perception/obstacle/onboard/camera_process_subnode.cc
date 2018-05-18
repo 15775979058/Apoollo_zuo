@@ -125,6 +125,7 @@ void CameraProcessSubnode::ImgCallback(const sensor_msgs::Image &message) {
   cv::Mat mask;
   PERF_BLOCK_END("CameraProcessSubnode_Image_Preprocess");
 
+  //-- @Zuo: call yolo to detect obj
   detector_->Multitask(img, CameraDetectorOptions(), &objects, &mask);
   PERF_BLOCK_END("CameraProcessSubnode_detector_");
 
