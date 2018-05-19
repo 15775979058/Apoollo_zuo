@@ -86,7 +86,8 @@ class FusionSubnode : public Subnode {
   // lidar perception subnode event controls the publishing behavior
   EventID pub_driven_event_id_;
   EventID lidar_event_id_;
-  EventID radar_event_id_;
+  EventID radar_front_event_id_;
+  EventID radar_left_event_id_; //-- @Zuo: add radar_left subnode
   EventID camera_event_id_;
   EventID lane_event_id_;
   std::mutex fusion_subnode_mutex_;

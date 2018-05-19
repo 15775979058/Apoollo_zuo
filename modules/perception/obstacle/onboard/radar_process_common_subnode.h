@@ -46,14 +46,16 @@
 namespace apollo {
 namespace perception {
 
-class RadarProcessSubnode : public Subnode {
+class RadarProcessCommonSubnode : public Subnode {
  public:
-  RadarProcessSubnode() = default;
-  ~RadarProcessSubnode() = default;
+  RadarProcessCommonSubnode() = default;
+  ~RadarProcessCommonSubnode() = default;
 
   apollo::common::Status ProcEvents() override {
     return apollo::common::Status::OK();
   }
+
+  void SetSubnodeName(std::string name){ _name = name; }
 
  private:
   typedef std::pair<double, apollo::localization::LocalizationEstimate>
@@ -91,9 +93,11 @@ class RadarProcessSubnode : public Subnode {
   // here we use HdmapROIFilter
   std::unique_ptr<HdmapROIFilter> roi_filter_;
   Mutex mutex_;
+
+  std::string _name;
 };
 
-REGISTER_SUBNODE(RadarProcessSubnode);
+REGISTER_SUBNODE(RadarProcessCommonSubnode);
 
 }  // namespace perception
 }  // namespace apollo

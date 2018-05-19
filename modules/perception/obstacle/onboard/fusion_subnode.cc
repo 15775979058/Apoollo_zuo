@@ -117,13 +117,23 @@ bool FusionSubnode::InitOutputStream() {
     lidar_event_id_ = static_cast<EventID>(atoi((lidar_iter->second).c_str()));
   }
 
-  auto radar_iter = reserve_field_map.find("radar_event_id");
+  auto radar_iter = reserve_field_map.find("radar_front_event_id");
   if (radar_iter == reserve_field_map.end()) {
-    AWARN << "Failed to find radar_event_id:" << reserve_;
-    AINFO << "radar_event_id will be set -1";
-    radar_event_id_ = -1;
+    AWARN << "Failed to find radar_front_event_id:" << reserve_;
+    AINFO << "radar_front_event_id will be set -1";
+    radar_front_event_id_ = -1;
   } else {
-    radar_event_id_ = static_cast<EventID>(atoi((radar_iter->second).c_str()));
+    radar_front_event_id_ = static_cast<EventID>(atoi((radar_iter->second).c_str()));
+  }
+
+  //-- @Zuo: 从dag配置文件读取radar_left_event_id 2018-05-19
+  auto radar_left_iter = reserve_field_map.find("radar_left_event_id");
+  if (radar_left_iter == reserve_field_map.end()) {
+    AWARN << "Failed to find radar_left_event_id:" << reserve_;
+    AINFO << "radar_left_event_id_ will be set -1";
+    radar_left_event_id_ = -1;
+  } else {
+    radar_left_event_id_ = static_cast<EventID>(atoi((radar_left_iter->second).c_str()));
   }
 
   auto camera_iter = reserve_field_map.find("camera_event_id");
@@ -204,8 +214,10 @@ Status FusionSubnode::Process(const EventMeta &event_meta,
   }
   if (event_meta.event_id == lidar_event_id_) {
     PERF_BLOCK_END("fusion_lidar");
-  } else if (event_meta.event_id == radar_event_id_) {
-    PERF_BLOCK_END("fusion_radar");
+  } else if (event_meta.event_id == radar_front_event_id_) {
+    PERF_BLOCK_END("fusion_radar_front");
+  } else if (event_meta.event_id == radar_left_event_id_) {
+    PERF_BLOCK_END("fusion_radar_left");
   } else if (event_meta.event_id == camera_event_id_) {
     for (auto &obj : sensor_objs) {
       if (obj.sensor_type == SensorType::CAMERA) {
@@ -280,15 +292,18 @@ bool FusionSubnode::BuildSensorObjs(
     sensor_objects->timestamp = event.timestamp;
     if (event.event_id == lidar_event_id_) {
       sensor_objects->sensor_type = SensorType::VELODYNE_64;
-    } else if (event.event_id == radar_event_id_) {
-      sensor_objects->sensor_type = SensorType::RADAR;
+    } else if (event.event_id == radar_front_event_id_ || event.event_id == radar_left_event_id_) {
+      sensor_objects->sensor_type = SensorType::RADAR; //-- @Zuo 根据sensor_id设置sensor_type
     } else if (event.event_id == camera_event_id_) {
       sensor_objects->sensor_type = SensorType::CAMERA;
     } else {
       AERROR << "Event id is not supported. event:" << event.to_string();
       return false;
     }
-    sensor_objects->sensor_id = GetSensorType(sensor_objects->sensor_type);
+
+    //-- @Zuo: sensor_id 2018-05-19
+    // sensor_objects->sensor_id = GetSensorType(sensor_objects->sensor_type);
+
     multi_sensor_objs->push_back(*sensor_objects);
     ADEBUG << "get sensor objs:" << sensor_objects->ToString();
   }
@@ -308,7 +323,10 @@ bool FusionSubnode::GetSharedData(const Event &event,
   bool get_data_succ = false;
   if (event.event_id == lidar_event_id_ && lidar_object_data_ != nullptr) {
     get_data_succ = lidar_object_data_->Get(data_key, objs);
-  } else if (event.event_id == radar_event_id_ &&
+  } else if (event.event_id == radar_front_event_id_ &&
+             radar_object_data_ != nullptr) {
+    get_data_succ = radar_object_data_->Get(data_key, objs);
+  } else if (event.event_id == radar_left_event_id_ && //-- @Zuo: radar_left_event_id
              radar_object_data_ != nullptr) {
     get_data_succ = radar_object_data_->Get(data_key, objs);
   } else if (event.event_id == camera_event_id_ &&

@@ -70,13 +70,14 @@ cc_library(
 )
 
 cc_library(
-    name = "radar_subnode",
+    name = "radar_common_subnode",
     srcs = [
-        "radar_process_subnode.cc",
+        "radar_process_common_subnode.cc",
     ],
     hdrs = [
         "object_shared_data.h",
-        "radar_process_subnode.h",
+        "radar_process_common_subnode.h",
+        "radar_register.h",
     ],
     deps = [
         ":hdmapinput",

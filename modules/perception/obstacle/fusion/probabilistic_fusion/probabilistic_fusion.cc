@@ -142,8 +142,7 @@ bool ProbabilisticFusion::Fuse(
       }
 
       //-- Zuo：publish_sensor_id_这里设置的是触发融合的传感器，当此传感器收到数据，则进行融合，这里设置的是voledyne_64
-      if (GetSensorType(multi_sensor_objects[i].sensor_type) ==
-          publish_sensor_id_) {
+      if ( multi_sensor_objects[i].sensor_id == publish_sensor_id_) {
         need_to_fusion = true;
         fusion_time = multi_sensor_objects[i].timestamp;
         started_ = true;
@@ -242,7 +241,8 @@ void ProbabilisticFusion::CollectFusedObjects(
   int fg_obj_num = 0;
   std::vector<PbfTrackPtr> &tracks = track_manager_->GetTracks();
   for (size_t i = 0; i < tracks.size(); i++) {
-    if (tracks[i]->AbleToPublish()) {
+    //-- @Zuo: for show radar result 2018-05-19
+    /*if (tracks[i]->AbleToPublish())*/ {
       std::shared_ptr<PbfSensorObject> fused_object =
           tracks[i]->GetFusedObject();
       std::shared_ptr<Object> obj(new Object());
@@ -308,7 +308,8 @@ void ProbabilisticFusion::FuseForegroundObjects(
                          sensor_type, sensor_id, timestamp);
 
   if (FLAGS_use_navigation_mode) {
-    if (is_camera(sensor_type)) {
+    //-- @Zuo: for show radar result 2018-05-19
+    /*if (is_camera(sensor_type))*/ {
       CreateNewTracks(*foreground_objects, unassigned_objects);
     }
   } else {

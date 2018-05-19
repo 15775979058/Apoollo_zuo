@@ -20,7 +20,7 @@ cc_library(
         "//modules/perception/obstacle/onboard:lane_post_processing_subnode",
         "//modules/perception/obstacle/onboard:lidar_subnode",
         "//modules/perception/obstacle/onboard:perception_obstacle_shared_data",
-        "//modules/perception/obstacle/onboard:radar_subnode",
+        "//modules/perception/obstacle/onboard:radar_common_subnode",
         "//modules/perception/obstacle/onboard:visualization_subnode",
         "//modules/perception/onboard",
         "//modules/perception/proto:perception_proto",

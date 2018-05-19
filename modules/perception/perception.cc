@@ -33,7 +33,8 @@
 #include "modules/perception/obstacle/onboard/object_shared_data.h"
 #include "modules/perception/obstacle/onboard/camera_shared_data.h"
 #include "modules/perception/obstacle/onboard/fusion_shared_data.h"
-#include "modules/perception/obstacle/onboard/radar_process_subnode.h"
+//-- @Zuo 2018-05-18
+#include "modules/perception/obstacle/onboard/radar_register.h"
 #include "modules/perception/obstacle/onboard/visualization_subnode.h"
 #include "modules/perception/obstacle/onboard/cipv_subnode.h"
 #include "modules/perception/traffic_light/onboard/tl_preprocessor_subnode.h"
@@ -87,7 +88,8 @@ void Perception::RegistAllOnboardClass() {
 
   /// regist subnode
   RegisterFactoryLidarProcessSubnode();
-  RegisterFactoryRadarProcessSubnode();
+  RegisterFactoryRadarLeftProcessSubnode();
+  RegisterFactoryRadarFrontProcessSubnode();
   RegisterFactoryCameraProcessSubnode();
   RegisterFactoryCIPVSubnode();
   RegisterFactoryLanePostProcessingSubnode();

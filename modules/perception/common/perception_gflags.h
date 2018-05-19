@@ -52,6 +52,9 @@ DECLARE_int32(localization_buffer_size);
 DECLARE_string(radar_tf2_frame_id);
 DECLARE_string(radar_tf2_child_frame_id);
 DECLARE_string(radar_extrinsic_file);
+//-- @Zuo 2018-05-15
+DECLARE_string(radar_left_extrinsic_file);
+
 DECLARE_string(short_camera_extrinsic_file);
 
 /// obstacle/onboard/camera_process_subnode.cc
