@@ -216,6 +216,11 @@ void CameraProcessSubnode::VisualObjToSensorObj(
     obj->latest_tracked_time = vobj->last_track_timestamp;
     obj->velocity = vobj->velocity.cast<double>();
 
+    //-- @Zuo 2018-05-24
+    AINFO << "velocity[" << obj->track_id << "] = " << obj->velocity;
+    AINFO << "velocity theta[" << obj->track_id << "] = " << atan2(vobj->velocity.x(), vobj->velocity.y());
+    AINFO << "distance[" << obj->track_id << "] = " << sqrt(pow(obj->center(0),2)+pow(obj->center(1),2));
+
     obj->anchor_point = obj->center;
     obj->state_uncertainty = vobj->state_uncertainty;
 

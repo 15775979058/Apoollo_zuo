@@ -58,7 +58,7 @@ struct alignas(16) Object {
   Eigen::Vector3d direction = Eigen::Vector3d(1, 0, 0);
 
   //-- Zuo:这里坐标系是哪样的？为什么偏航角为零是(1, 0, 0)？
-  //-- 答：车身坐标系，原点在后轴中点，前方为X，上方为Z，右方为Y。
+  //-- 答：车身坐标系，原点在后轴中点，前方为X，上方为Z，左方为Y。
   // the yaw angle, theta = 0.0 <=> direction = (1, 0, 0)
   double theta = 0.0;
   // ground center of the object (cx, cy, z_min)

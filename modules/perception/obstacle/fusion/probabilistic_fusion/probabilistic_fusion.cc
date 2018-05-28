@@ -303,13 +303,14 @@ void ProbabilisticFusion::FuseForegroundObjects(
                   &unassigned_tracks, &unassigned_objects,
                   &track2measurements_dist, &measurement2tracks_dist);
 
-  ADEBUG << "fg_track_cnt = " << tracks.size()
+  //-- @Zuo: unit test 2018-05-23
+  AINFO << "fg_track_cnt = " << tracks.size()
          << ", fg_obj_cnt = " << foreground_objects->size()
          << ", assignment = " << assignments.size()
          << ", unassigned_track_cnt = " << unassigned_tracks.size()
          << ", unassigned_obj_cnt = " << unassigned_objects.size();
 
-  //-- Zuo: 根据匹配关系，将tracks和foreground_objects对应的匹配对用kalman进行融合，然后用融合后的Obj更行Tracks
+  //-- Zuo: 根据匹配关系，将tracks和foreground_objects对应的匹配对用kalman进行融合，然后用融合后的Obj更新Tracks
   UpdateAssignedTracks(&tracks, *foreground_objects, assignments,
                        track2measurements_dist);
 
@@ -318,6 +319,10 @@ void ProbabilisticFusion::FuseForegroundObjects(
 
   if (FLAGS_use_navigation_mode) {
     if (is_camera(sensor_type)) {
+
+      //-- @Zuo: unit_test print 2018-05-23
+      AINFO << "============CreateNewTracks=============";
+
       CreateNewTracks(*foreground_objects, unassigned_objects);
     }
   } else {

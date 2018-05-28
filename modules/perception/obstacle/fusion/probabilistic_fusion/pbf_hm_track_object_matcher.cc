@@ -50,9 +50,14 @@ bool PbfHmTrackObjectMatcher::Match(
   //--   现在的assignments存储的是现有的交集的映射关系
   IdAssign(fusion_tracks, sensor_objects, assignments, unassigned_fusion_tracks,
            unassigned_sensor_objects);
-  ADEBUG << "Num of fusion tracks = " << fusion_tracks.size()
-         << ", num of sensor objects = " << sensor_objects.size()
-         << ", num of assignments = " << assignments->size();
+
+           
+  //-- @Zuo: unit test 2018-05-23
+  AINFO << "Num of fusion tracks = " << fusion_tracks.size();
+  AINFO << "num of sensor objects = " << sensor_objects.size();
+  AINFO << "num of assignments = " << assignments->size();
+  AINFO << "unassigned_fusion_tracks SIZE = " << unassigned_fusion_tracks->size();
+  AINFO << "unassigned_sensor_objects SIZE = " << unassigned_sensor_objects->size();
 
   //-- Zuo: association_mat里面存储了fusion_tracks和sensor_objects重心的几何距离。
   std::vector<std::vector<double>> association_mat;
@@ -153,7 +158,8 @@ void PbfHmTrackObjectMatcher::ComputeAssociationMat(
       //-- Zuo: 返回fusion_track和sensor_object重心之间的几何距离
       double distance =
           pbf_distance.Compute(fusion_track, sensor_object, options);
-      ADEBUG << "sensor distance:" << distance;
+      //-- @Zuo: unit_test 2018-05-23
+      AINFO << "sensor distance:" << distance;
       (*association_mat)[i][j] = distance;
     }
   }

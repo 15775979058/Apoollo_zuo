@@ -130,8 +130,11 @@ DEFINE_string(screen_output_dir, "./", "");
 DEFINE_string(frame_visualizer, "GLFusionVisualizer", "");
 
 DEFINE_bool(async_fusion, false, "use distance angle ");
-DEFINE_bool(use_distance_angle_fusion, true,
-            "use distance angle prob distance in fusion");
+
+//-- @Zuo: 为了增加新的计算匹配系数的方法
+DEFINE_string(compute_associationMat_function, "distance_angle",
+            "use distance angle prob distance in fusion.distance_angle/distance_angle_velocity");
+
 DEFINE_bool(publish_fusion_event, false, "publish fusion event");
 DEFINE_bool(bag_mode, false, "run perception in bag mode");
 

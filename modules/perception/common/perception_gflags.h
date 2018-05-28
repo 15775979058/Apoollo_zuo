@@ -102,7 +102,7 @@ DECLARE_bool(show_motion);
 
 // async fusion using imf
 DECLARE_bool(async_fusion);
-DECLARE_bool(use_distance_angle_fusion);
+DECLARE_string(compute_associationMat_function);//-- @Zuo: 增加新的计算匹配系数的方法
 DECLARE_bool(publish_fusion_event);
 DECLARE_bool(bag_mode);
 DECLARE_bool(skip_camera_frame);

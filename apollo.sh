@@ -129,7 +129,7 @@ function build() {
   if [ "$MACHINE_ARCH" == 'aarch64' ]; then
     JOB_ARG="--jobs=3"
   fi
-  echo "$BUILD_TARGETS" | xargs bazel build $JOB_ARG $DEFINES -c $@
+  echo "$BUILD_TARGETS" | xargs bazel build $JOB_ARG $DEFINES -c $@ --local_resources 2048,2.0,1.0
   if [ $? -ne 0 ]; then
     fail 'Build failed!'
   fi
