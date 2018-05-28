@@ -64,6 +64,11 @@ float PbfTrackObjectDistance::Compute(
   if (FLAGS_use_navigation_mode) {
     if (FLAGS_compute_associationMat_function == "distance_angle") {
       distance = ComputeDistanceAngleMatchProb(fused_object, sensor_object);
+
+      //-- @Zuo: TEST 对比两个方法的值
+      AINFO << "distance = " << distance;
+      AINFO << "distance_zuo = " << ComputeDistanceAngleVelocityMatch(fused_object, sensor_object);
+
     } else if(FLAGS_compute_associationMat_function == "distance_angle_velocity") {
       //-- @Zuo TODO add a new function
       distance = ComputeDistanceAngleVelocityMatch(fused_object, sensor_object);
@@ -243,12 +248,17 @@ float PbfTrackObjectDistance::ComputeDistanceAngleVelocityMatch(
     const std::shared_ptr<PbfSensorObject> &fused_object,
     const std::shared_ptr<PbfSensorObject> &sensor_object) {
 
-  static float weight_e = 0.6; // 中心欧拉距离系数
+  static float weight_e = 0.6; // 中心欧拉距离系数,∈
   static float weight_v = 0.3; // 速度权重系数
   static float weight_d = 0.1; // 主方向权重系数
-  int theta_threshold = 45;
+  static int theta_threshold = 45;
+  static float speed_diff = 5.0f;
+  static float angle_tolerance = 10.0f;
   float distance = 0;
   float EuclideanDistance = 0;
+
+  float angle_distance_diff = 0.0f;
+
 
   const std::shared_ptr<Object> &fobj = fused_object->object;
   const std::shared_ptr<Object> &sobj = sensor_object->object;
@@ -264,8 +274,8 @@ float PbfTrackObjectDistance::ComputeDistanceAngleVelocityMatch(
   //-- 使用弧度做权重输入
   double radian_v = theta / 180 * M_PI;
 
-  //-- 2.欧拉距离
-  EuclideanDistance = ComputeDistance3D(fused_object, sensor_object, ref_pos, 3);
+  //-- 2.欧拉距离，ref_pos暂时没弄清什么用，传入的原点
+  EuclideanDistance = ComputeDistance3D(fused_object, sensor_object, Eigen::Vector3d(0,0,0), 3);
 
   //-- 3.direction
   double s_direction = sobj->direction.norm();
@@ -279,21 +289,26 @@ float PbfTrackObjectDistance::ComputeDistanceAngleVelocityMatch(
   //-- 4.根据权重计算总距离
   distance = weight_e * EuclideanDistance + weight_v * radian_v + weight_d * radian_d;
 
-  //-- @Zuo: 速度夹角余弦值
+  //-- Zuo: Obj中心和原点连线夹角
+  float sangle = GetAngle(sobj);
+  float fangle = GetAngle(fobj);
+  angle_distance_diff = (std::abs(sangle - fangle) * 180) / M_PI;
+
+  //-- 5. 使用radar数组做刷选
   if (is_radar(sensor_object->sensor_type)) {
     double svelocity = sobj->velocity.norm();
     double fvelocity = fobj->velocity.norm();
     if (svelocity > 0.0 && fvelocity > 0.0) {
       float cos_distance =
           sobj->velocity.dot(fobj->velocity) / (svelocity * fvelocity);
-      //-- @Zuo: θ < 60°
+      //-- θ < 60°
       if (cos_distance > FLAGS_pbf_distance_speed_cos_diff) {
         ADEBUG << "ignore radar data for fusing" << cos_distance;
         distance = std::numeric_limits<float>::max();
       }
     }
 
-    //-- Zuo: 要求radar目标速度diff小于5m、角度diff小于10°
+    //-- 要求radar目标速度diff小于5m、角度diff小于10°
     if (std::abs(svelocity - fvelocity) > speed_diff ||
         angle_distance_diff > angle_tolerance) {
       ADEBUG << "ignore radar data for fusing" << speed_diff;
