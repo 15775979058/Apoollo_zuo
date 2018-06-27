@@ -50,15 +50,7 @@ bool PbfHmTrackObjectMatcher::Match(
   //--   现在的assignments存储的是现有的交集的映射关系
   IdAssign(fusion_tracks, sensor_objects, assignments, unassigned_fusion_tracks,
            unassigned_sensor_objects);
-
            
-  //-- @Zuo: unit test 2018-05-23
-  AINFO << "Num of fusion tracks = " << fusion_tracks.size();
-  AINFO << "num of sensor objects = " << sensor_objects.size();
-  AINFO << "num of assignments = " << assignments->size();
-  AINFO << "unassigned_fusion_tracks SIZE = " << unassigned_fusion_tracks->size();
-  AINFO << "unassigned_sensor_objects SIZE = " << unassigned_sensor_objects->size();
-
   //-- Zuo: association_mat里面存储了fusion_tracks和sensor_objects重心的几何距离。
   std::vector<std::vector<double>> association_mat;
   ComputeAssociationMat(fusion_tracks, sensor_objects,
@@ -92,6 +84,7 @@ bool PbfHmTrackObjectMatcher::Match(
   for (const auto &track_measurement_pair : *assignments) {
     const int track_ind = track_measurement_pair.first;
     const int measurement_ind = track_measurement_pair.second;
+    //-- @Zuo 2018-05-18 打开这里可以判断新增的Radar的数据是否进来
     ADEBUG << "track_ind is matched to measurement_ind for sensor "
            << sensor_objects[0]->sensor_id << " " << track_ind << " "
            << measurement_ind;

@@ -30,6 +30,7 @@ using apollo::drivers::canbus::Byte;
 
 ClusterQualityInfo702::ClusterQualityInfo702() {}
 const uint32_t ClusterQualityInfo702::ID = 0x702;
+const uint32_t ClusterQualityInfo702::ID_1 = 0x712;
 
 void ClusterQualityInfo702::Parse(const std::uint8_t* bytes, int32_t length,
                                   ContiRadar* conti_radar) const {

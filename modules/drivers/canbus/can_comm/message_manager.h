@@ -115,6 +115,9 @@ class MessageManager {
   void AddRecvProtocolData();
 
   template <class T, bool need_check>
+  void AddRecvProtocolData(const uint32_t _id);
+
+  template <class T, bool need_check>
   void AddSendProtocolData();
 
   std::vector<std::unique_ptr<ProtocolData<SensorType>>> send_protocol_data_;
@@ -145,6 +148,28 @@ void MessageManager<SensorType>::AddRecvProtocolData() {
     check_ids_[T::ID].real_period = 0;
     check_ids_[T::ID].last_time = 0;
     check_ids_[T::ID].error_count = 0;
+  }
+}
+
+/**
+ * Author: Zuo
+ * Data:   2018-06-21
+ * Brief:  对现有的AddRecvProtocolData进行扩展，可输入ID。为了实现接入多台Radar设备。
+ */
+template <typename SensorType>
+template <class T, bool need_check>
+void MessageManager<SensorType>::AddRecvProtocolData(const uint32_t _id) {
+  recv_protocol_data_.emplace_back(new T());
+  auto *dt = recv_protocol_data_.back().get();
+  if (dt == nullptr) {
+    return;
+  }
+  protocol_data_map_[_id] = dt;
+  if (need_check) {
+    check_ids_[_id].period = dt->GetPeriod();
+    check_ids_[_id].real_period = 0;
+    check_ids_[_id].last_time = 0;
+    check_ids_[_id].error_count = 0;
   }
 }
 

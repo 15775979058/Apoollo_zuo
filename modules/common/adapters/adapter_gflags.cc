@@ -65,6 +65,9 @@ DEFINE_string(delphi_esr_topic, "/apollo/sensor/delphi_esr",
               "delphi esr radar topic name");
 DEFINE_string(conti_radar_topic, "/apollo/sensor/conti_radar",
               "delphi esr radar topic name");
+//-- @Zuo for MultiRadar 2018-06-22
+DEFINE_string(conti_radar_1_topic, "/apollo/sensor/conti_radar1",
+              "delphi esr radar topic name");
 DEFINE_string(ultrasonic_radar_topic, "/apollo/sensor/ultrasonic_radar",
               "ultrasonic esr radar topic name");
 // TODO(Authors): Change the topic name

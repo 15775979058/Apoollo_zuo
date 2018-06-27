@@ -30,6 +30,7 @@ using apollo::drivers::ContiRadarObs;
 
 ObjectListStatus60A::ObjectListStatus60A() {}
 const uint32_t ObjectListStatus60A::ID = 0x60A;
+const uint32_t ObjectListStatus60A::ID_1 = 0x61A;
 
 void ObjectListStatus60A::Parse(const std::uint8_t* bytes, int32_t length,
                                 ContiRadar* conti_radar) const {

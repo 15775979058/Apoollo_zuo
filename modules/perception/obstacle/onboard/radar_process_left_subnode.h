@@ -14,8 +14,8 @@
  * limitations under the License.
  *****************************************************************************/
 
-#ifndef MODULES_PERCEPTION_OBSTACLE_ONBOARD_SUBNODE_H_
-#define MODULES_PERCEPTION_OBSTACLE_ONBOARD_SUBNODE_H_
+#ifndef MODULES_PERCEPTION_OBSTACLE_ONBOARD_RADAR_LEFT_SUBNODE_H_
+#define MODULES_PERCEPTION_OBSTACLE_ONBOARD_RADAR_LEFT_SUBNODE_H_
 #include <boost/circular_buffer.hpp>
 #include <memory>
 #include <string>
@@ -46,10 +46,10 @@
 namespace apollo {
 namespace perception {
 
-class RadarProcessSubnode : public Subnode {
+class RadarProcessLeftSubnode : public Subnode {
  public:
-  RadarProcessSubnode() = default;
-  ~RadarProcessSubnode() = default;
+  RadarProcessLeftSubnode() = default;
+  ~RadarProcessLeftSubnode() = default;
 
   apollo::common::Status ProcEvents() override {
     return apollo::common::Status::OK();
@@ -61,13 +61,6 @@ class RadarProcessSubnode : public Subnode {
   bool InitInternal() override;
 
   void OnRadar(const ContiRadar &radar_obs);
-
-  /**
-   * Author: Zuo
-   * Data:   2018-06-22
-   * Brief:  for MultiRadar 增加一个新的雷达CallBackcFunc 
-   */
-  void OnRadar1(const ContiRadar &radar_obs);
 
   void OnLocalization(
       const apollo::localization::LocalizationEstimate &localization);
@@ -88,21 +81,21 @@ class RadarProcessSubnode : public Subnode {
   common::ErrorCode error_code_ = common::OK;
   RadarObjectData *radar_data_ = nullptr;
   std::string device_id_;
-  Eigen::Matrix4d radar_extrinsic_, radar1_extrinsic_;
+  Eigen::Matrix4d radar_extrinsic_;
   Eigen::Matrix4d short_camera_extrinsic_;
 
   boost::circular_buffer<LocalizationPair> localization_buffer_;
-  ContiRadarIDExpansion conti_id_expansion_, conti_id_expansion1_;
-  std::unique_ptr<BaseRadarDetector> radar_detector_, radar1_detector_;
+  ContiRadarIDExpansion conti_id_expansion_;
+  std::unique_ptr<BaseRadarDetector> radar_detector_;
   HDMapInput *hdmap_input_ = nullptr;
   // here we use HdmapROIFilter
   std::unique_ptr<HdmapROIFilter> roi_filter_;
   Mutex mutex_;
 };
 
-REGISTER_SUBNODE(RadarProcessSubnode);
+REGISTER_SUBNODE(RadarProcessLeftSubnode);
 
 }  // namespace perception
 }  // namespace apollo
 
-#endif  // MODULES_PERCEPTION_OBSTACLE_ONBOARD_SUBNODE_H_
+#endif  // MODULES_PERCEPTION_OBSTACLE_ONBOARD_RADAR_LEFT_SUBNODE_H_

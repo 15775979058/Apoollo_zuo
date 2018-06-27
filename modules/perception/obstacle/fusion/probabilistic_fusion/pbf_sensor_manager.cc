@@ -72,7 +72,11 @@ bool PbfSensorManager::Init() {
 //--  std::map<std::string, PbfSensor *> sensors_;
 //--  PbfSensor 包含deque(FIFO)
 void PbfSensorManager::AddSensorMeasurements(const SensorObjects &objects) {
-  std::string sensor_id = GetSensorType(objects.sensor_type);
+
+  //-- @Zuo: 2018-05-16
+  // std::string sensor_id = GetSensorType(objects.sensor_type);
+  std::string sensor_id = objects.sensor_id;
+
   SensorType type = objects.sensor_type;
 
   //-- Zuo: 根据sensor_id来区分不同的设备数据

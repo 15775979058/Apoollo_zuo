@@ -212,6 +212,10 @@ void AdapterManager::Init(const AdapterManagerConfig &configs) {
         EnablePandoraCameraBackGray(FLAGS_pandora_camera_back_gray_topic,
                                     config);
         break;
+      //-- @Zuo for MultiRadar 2018-06-22
+      case AdapterConfig::CONTI_RADAR_1:
+        EnableContiRadar1(FLAGS_conti_radar_1_topic, config);
+        break;
       default:
         AERROR << "Unknown adapter config type!";
         break;

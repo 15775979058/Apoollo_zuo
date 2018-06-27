@@ -29,6 +29,7 @@ using apollo::drivers::canbus::Byte;
 
 ObjectExtendedInfo60D::ObjectExtendedInfo60D() {}
 const uint32_t ObjectExtendedInfo60D::ID = 0x60D;
+const uint32_t ObjectExtendedInfo60D::ID_1 = 0x61D;
 
 void ObjectExtendedInfo60D::Parse(const std::uint8_t* bytes, int32_t length,
                                   ContiRadar* conti_radar) const {

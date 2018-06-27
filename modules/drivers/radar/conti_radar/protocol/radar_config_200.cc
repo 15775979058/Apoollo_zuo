@@ -26,6 +26,7 @@ using apollo::drivers::canbus::Byte;
 using apollo::drivers::ContiRadar;
 
 const uint32_t RadarConfig200::ID = 0x200;
+const uint32_t RadarConfig200::ID_1 = 0x210;
 
 RadarConfig200::RadarConfig200() {}
 RadarConfig200::~RadarConfig200() {}

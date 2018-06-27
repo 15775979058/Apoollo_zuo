@@ -91,6 +91,7 @@ using StaticInfoAdapter = Adapter<apollo::data::StaticInfo>;
 using MobileyeAdapter = Adapter<drivers::Mobileye>;
 using DelphiESRAdapter = Adapter<drivers::DelphiESR>;
 using ContiRadarAdapter = Adapter<drivers::ContiRadar>;
+using ContiRadar1Adapter = Adapter<drivers::ContiRadar>;//-- @Zuo: for MultiRadar 2018-06-21
 using UltrasonicAdapter = Adapter<drivers::Ultrasonic>;
 using CompressedImageAdapter = Adapter<sensor_msgs::CompressedImage>;
 using GnssRtkObsAdapter = Adapter<apollo::drivers::gnss::EpochObservation>;

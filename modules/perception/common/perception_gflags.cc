@@ -68,6 +68,18 @@ DEFINE_double(front_radar_forward_distance, 120.0,
 DEFINE_string(radar_extrinsic_file,
               "modules/perception/data/params/radar_extrinsics.yaml",
               "radar extrinsic file");
+<<<<<<< HEAD
+DEFINE_string(radar1_extrinsic_file,
+              "modules/perception/data/params/radar_extrinsics.yaml",
+              "radar extrinsic file");
+
+=======
+//-- @Zuo 2018-05-15              
+DEFINE_string(radar_left_extrinsic_file,
+              "modules/perception/data/params/radar_left_imu_extrinsics.yaml",
+              "left radar extrinsic file");
+              
+>>>>>>> 48ebe52ee4bf05cfe9c1a1c8df7c370feb89d869
 DEFINE_string(short_camera_extrinsic_file,
               "modules/perception/data/params/short_camera_extrinsics.yaml",
               "short_camera extrinsic file");

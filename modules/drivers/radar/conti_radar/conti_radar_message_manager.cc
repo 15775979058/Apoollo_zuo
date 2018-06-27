@@ -45,6 +45,16 @@ ContiRadarMessageManager::ContiRadarMessageManager() {
   AddRecvProtocolData<ObjectGeneralInfo60B, true>();
   AddRecvProtocolData<ObjectListStatus60A, true>();
   AddRecvProtocolData<ObjectQualityInfo60C, true>();
+
+  //-- @Zuo: for MultiRadar 2018-06-21
+  AddRecvProtocolData<RadarState201, true>(RadarState201::ID_1);
+  AddRecvProtocolData<ClusterListStatus600, true>(ClusterListStatus600::ID_1);
+  AddRecvProtocolData<ClusterGeneralInfo701, true>(ClusterGeneralInfo701::ID_1);
+  AddRecvProtocolData<ClusterQualityInfo702, true>(ClusterQualityInfo702::ID_1);
+  AddRecvProtocolData<ObjectExtendedInfo60D, true>(ObjectExtendedInfo60D::ID_1);
+  AddRecvProtocolData<ObjectGeneralInfo60B, true>(ObjectGeneralInfo60B::ID_1);
+  AddRecvProtocolData<ObjectListStatus60A, true>(ObjectListStatus60A::ID_1);
+  AddRecvProtocolData<ObjectQualityInfo60C, true>(ObjectQualityInfo60C::ID_1);
 }
 
 void ContiRadarMessageManager::set_radar_conf(RadarConf radar_conf) {
@@ -70,35 +80,56 @@ ProtocolData<ContiRadar> *ContiRadarMessageManager::GetMutableProtocolDataById(
 
 void ContiRadarMessageManager::Parse(const uint32_t message_id,
                                      const uint8_t *data, int32_t length) {
-  ProtocolData<ContiRadar> *sensor_protocol_data =
-      GetMutableProtocolDataById(message_id);
-  if (sensor_protocol_data == nullptr) {
-    return;
-  }
+  //-- @Zuo Test 2018-06-21
+  AINFO << "ZuoPrint message_id = " << message_id;
+  //-- @Zuo Test 2018-06-21
+
+  ProtocolData<ContiRadar> *sensor_protocol_data = GetMutableProtocolDataById(message_id);
+
+  if (sensor_protocol_data == nullptr) return;
 
   std::lock_guard<std::mutex> lock(sensor_data_mutex_);
-  if (!is_configured_ && message_id != RadarState201::ID) {
-    // read radar state message first
-    return;
+  if (!is_configured_ && (message_id == RadarState201::ID || message_id == RadarState201::ID_1) ) {
+      // read radar state message first
+      return;
   }
 
   // trigger publishment
-  if (message_id == ClusterListStatus600::ID ||
-      message_id == ObjectListStatus60A::ID) {
-    ADEBUG << sensor_data_.ShortDebugString();
+  if (message_id == ClusterListStatus600::ID || message_id == ObjectListStatus60A::ID) {
+      ADEBUG << sensor_data_.ShortDebugString();
 
-    if (sensor_data_.contiobs_size() <=
-        sensor_data_.object_list_status().nof_objects()) {
-      // maybe lost a object_list_status msg
-      AdapterManager::PublishContiRadar(sensor_data_);
+      if (sensor_data_.contiobs_size() <= sensor_data_.object_list_status().nof_objects()) {
+          // maybe lost a object_list_status msg
+          AdapterManager::PublishContiRadar(sensor_data_);
+          
+          //-- @Zuo Test 2018-06-22
+          AINFO << "Publish topic = " << message_id;
+          //-- @Zuo Test 2018-06-22
+
+      }
+      sensor_data_.Clear();
+      // fill header when recieve the general info message
+      AdapterManager::FillContiRadarHeader(FLAGS_sensor_node_name, &sensor_data_);
+  } else if (message_id == ClusterListStatus600::ID_1 || message_id == ObjectListStatus60A::ID_1) {
+      ADEBUG << sensor_data_.ShortDebugString();
+
+      if (sensor_data_.contiobs_size() <= sensor_data_.object_list_status().nof_objects()) {
+          // maybe lost a object_list_status msg
+          AdapterManager::PublishContiRadar1(sensor_data_);
+
+          //-- @Zuo Test 2018-06-22
+          AINFO << "Publish topic = " << message_id;
+          //-- @Zuo Test 2018-06-22
+
+      }
+      sensor_data_.Clear();
+      // fill header when recieve the general info message
+      AdapterManager::FillContiRadar1Header(FLAGS_sensor_node_name, &sensor_data_);
     }
-    sensor_data_.Clear();
-    // fill header when recieve the general info message
-    AdapterManager::FillContiRadarHeader(FLAGS_sensor_node_name, &sensor_data_);
-  }
 
   sensor_protocol_data->Parse(data, length, &sensor_data_);
 
+  //-- @Zuo TODO 这里的sensor_data_是否需要增加一套
   if (message_id == RadarState201::ID) {
     ADEBUG << sensor_data_.ShortDebugString();
     if (sensor_data_.radar_state().send_quality() ==
@@ -121,6 +152,28 @@ void ContiRadarMessageManager::Parse(const uint32_t message_id,
       sender_message.Update();
       can_client_->SendSingleFrame({sender_message.CanFrame()});
     }
+  } else if(message_id == RadarState201::ID_1) {
+    ADEBUG << sensor_data_.ShortDebugString();
+    if (sensor_data_.radar_state().send_quality() ==
+            radar_config_.radar_conf().send_quality() &&
+        sensor_data_.radar_state().send_ext_info() ==
+            radar_config_.radar_conf().send_ext_info() &&
+        sensor_data_.radar_state().max_distance() ==
+            radar_config_.radar_conf().max_distance() &&
+        sensor_data_.radar_state().output_type() ==
+            radar_config_.radar_conf().output_type() &&
+        sensor_data_.radar_state().rcs_threshold() ==
+            radar_config_.radar_conf().rcs_threshold() &&
+        sensor_data_.radar_state().radar_power() ==
+            radar_config_.radar_conf().radar_power()) {
+      is_configured_ = true;
+    } else {
+      AINFO << "configure radar again";
+      SenderMessage<ContiRadar> sender_message(RadarConfig200::ID_1,
+                                               &radar_config_);
+      sender_message.Update();
+      can_client_->SendSingleFrame({sender_message.CanFrame()});
+    }
   }
 
   received_ids_.insert(message_id);
@@ -138,6 +191,11 @@ void ContiRadarMessageManager::Parse(const uint32_t message_id,
     }
     it->second.last_time = time;
   }
+
+  //-- @Zuo Test 2018-06-21
+  AINFO << "=======================";
+  //-- @Zuo Test 2018-06-21
+
 }
 
 }  // namespace conti_radar

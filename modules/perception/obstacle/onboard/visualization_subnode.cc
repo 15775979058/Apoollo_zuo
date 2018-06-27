@@ -171,6 +171,15 @@ bool VisualizationSubnode::InitStream() {
     radar_event_id_ = static_cast<EventID>(atoi((iter->second).c_str()));
   }
 
+  //-- @Zuo radar_left_event_id_
+  iter = reserve_field_map.find("radar_left_event_id");
+  if (iter == reserve_field_map.end()) {
+    AWARN << "Failed to find radar_left_event_id_: " << reserve_;
+    radar_left_event_id_ = -1;
+  } else {
+    radar_left_event_id_ = static_cast<EventID>(atoi((iter->second).c_str()));
+  }
+
   iter = reserve_field_map.find("fusion_event_id");
   if (iter == reserve_field_map.end()) {
     AWARN << "Failed to find fusion_event_id_: " << reserve_;
@@ -325,12 +334,14 @@ void VisualizationSubnode::SetFrameContent(const Event& event,
 }
 
 apollo::common::Status VisualizationSubnode::ProcEvents() {
+
   for (auto event_meta : sub_meta_events_) {
 //    AINFO <<"Vis_sub: event_meta id: " << event_meta.event_id;
     std::vector<Event> events;
     if (!SubscribeEvents(event_meta, &events)) {
       return Status(ErrorCode::PERCEPTION_ERROR, "Failed to proc events.");
     }
+
     if (events.empty()) continue;
 
     for (size_t j = 0; j < events.size(); j++) {

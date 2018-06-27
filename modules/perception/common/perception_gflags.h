@@ -52,6 +52,13 @@ DECLARE_int32(localization_buffer_size);
 DECLARE_string(radar_tf2_frame_id);
 DECLARE_string(radar_tf2_child_frame_id);
 DECLARE_string(radar_extrinsic_file);
+<<<<<<< HEAD
+DECLARE_string(radar1_extrinsic_file);//-- @Zuo: for MultiRadar 2018-06-22
+=======
+
+//-- @Zuo 2018-05-15
+DECLARE_string(radar_left_extrinsic_file);
+>>>>>>> 48ebe52ee4bf05cfe9c1a1c8df7c370feb89d869
 DECLARE_string(short_camera_extrinsic_file);
 
 /// obstacle/onboard/camera_process_subnode.cc

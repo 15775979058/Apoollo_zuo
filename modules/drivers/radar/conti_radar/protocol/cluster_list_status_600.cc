@@ -30,6 +30,7 @@ using apollo::drivers::ContiRadarObs;
 
 ClusterListStatus600::ClusterListStatus600() {}
 const uint32_t ClusterListStatus600::ID = 0x600;
+const uint32_t ClusterListStatus600::ID_1 = 0x610;
 
 void ClusterListStatus600::Parse(const std::uint8_t* bytes, int32_t length,
                                  ContiRadar* conti_radar) const {

@@ -27,7 +27,10 @@ namespace perception {
 using std::vector;
 using std::string;
 
-DEFINE_int32(max_event_queue_size, 1000, "The max size of event queue.");
+//-- @Zuo fdq modified on 2018-06-15
+// 伏东奇将size由1000设置成3，为了解决接摄像头后卡顿的问题。
+DEFINE_int32(max_event_queue_size, 3, "The max size of event queue.");
+//-- @Zuo fdq modified on 2018-06-15
 
 bool EventManager::Init(const DAGConfig::EdgeConfig &edge_config) {
   if (inited_) {

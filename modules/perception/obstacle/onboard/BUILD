@@ -100,6 +100,38 @@ cc_library(
     ],
 )
 
+## @Zuo 2018-05-15 for radar left subnode
+cc_library(
+    name = "radar_left_subnode",
+    srcs = [
+        "radar_process_left_subnode.cc",
+    ],
+    hdrs = [
+        "object_shared_data.h",
+        "radar_process_left_subnode.h",
+    ],
+    deps = [
+        ":hdmapinput",
+        "//modules/common",
+        "//modules/common:log",
+        "//modules/common/adapters:adapter_manager",
+        "//modules/common/configs:config_gflags",
+        "//modules/common/time",
+        "//modules/perception/common",
+        "//modules/perception/common:pcl_util",
+        "//modules/perception/lib/base",
+        "//modules/perception/lib/config_manager",
+        "//modules/perception/obstacle/base",
+        "//modules/perception/obstacle/lidar/roi_filter/hdmap_roi_filter",
+        "//modules/perception/obstacle/lidar/visualizer/opengl_visualizer",
+        "//modules/perception/obstacle/radar/dummy",
+        "//modules/perception/obstacle/radar/modest:modest_detector",
+        "//modules/perception/onboard",
+        "@eigen",
+        "@ros//:ros_common",
+    ],
+)
+
 cc_library(
     name = "camera_subnode",
     srcs = [

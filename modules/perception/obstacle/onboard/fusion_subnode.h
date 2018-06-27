@@ -87,6 +87,10 @@ class FusionSubnode : public Subnode {
   EventID pub_driven_event_id_;
   EventID lidar_event_id_;
   EventID radar_event_id_;
+
+  //-- @Zuo: 2018-05-16
+  EventID radar_left_event_id_;
+
   EventID camera_event_id_;
   EventID lane_event_id_;
   std::mutex fusion_subnode_mutex_;

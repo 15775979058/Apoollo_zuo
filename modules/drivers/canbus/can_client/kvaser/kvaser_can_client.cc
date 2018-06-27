@@ -202,19 +202,19 @@ ErrorCode kvaserCanClient::Receive(std::vector<CanFrame> *const frames,
 
     if ( stat != canOK ) {
        if (stat == canERR_NOMSG ){
-          AERROR << "receive no message,error code: " << stat << ", "
-                 << GetErrorString(stat);
+          // AERROR << "receive no message,error code: " << stat << ", "
+                //  << GetErrorString(stat);
           return ErrorCode::OK;
         }
        else{
-       AERROR << "receive message failed, error code: " << stat << ", "
-              << GetErrorString(stat);
+      //  AERROR << "receive message failed, error code: " << stat << ", "
+              // << GetErrorString(stat);
        return ErrorCode::CAN_CLIENT_ERROR_BASE;
       }
   }
   else {
     if (recv_frames_[0].len != 8){
-      AERROR << "receive frame message more than one ,the total frame len is:" << recv_frames_[0].len;
+      // AERROR << "receive frame message more than one ,the total frame len is:" << recv_frames_[0].len;
     }
 
   }

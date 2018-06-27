@@ -47,6 +47,7 @@ DECLARE_string(static_info_topic);
 DECLARE_string(mobileye_topic);
 DECLARE_string(delphi_esr_topic);
 DECLARE_string(conti_radar_topic);
+DECLARE_string(conti_radar_1_topic);//-- @Zuo for MultiRadar 2018-06-22
 DECLARE_string(ultrasonic_radar_topic);
 DECLARE_string(compressed_image_topic);
 DECLARE_string(image_front_topic);

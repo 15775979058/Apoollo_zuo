@@ -65,6 +65,10 @@ apollo::common::Status ContiRadarCanbus::Init() {
   sensor_message_manager_->set_can_client(can_client_);
   AINFO << "Sensor message manager is successfully created.";
 
+  //-- @Zuo: set Radar ID 2018-06-21
+  //-- TODO 
+  //-- @Zuo: set Radar ID 2018-06-21
+
   if (can_receiver_.Init(can_client_.get(), sensor_message_manager_.get(),
                          conti_radar_conf_.can_conf().enable_receiver_log()) !=
       ErrorCode::OK) {
@@ -78,6 +82,7 @@ apollo::common::Status ContiRadarCanbus::Init() {
 apollo::common::ErrorCode ContiRadarCanbus::ConfigureRadar() {
   RadarConfig200 radar_config;
   radar_config.set_radar_conf(conti_radar_conf_.radar_conf());
+  //-- @Zuo 这里是否需要config每个设备？ 2018-06-22
   SenderMessage<ContiRadar> sender_message(RadarConfig200::ID, &radar_config);
   sender_message.Update();
   return can_client_->SendSingleFrame({sender_message.CanFrame()});

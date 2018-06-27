@@ -95,6 +95,12 @@ bool CameraProcessSubnode::InitModules() {
 
 void CameraProcessSubnode::ImgCallback(const sensor_msgs::Image &message) {
   double timestamp = message.header.stamp.toSec();
+
+  //-- @Zuo Test 2018-06-19
+  //-- 为了将camera和radar的timestamp设置一致，方便后续的融合。以后肯定要修改到发送端去。
+  timestamp = apollo::common::time::Clock::NowInSeconds();
+  //-- @Zuo Test 2018-06-19
+
   ADEBUG << "CameraProcessSubnode ImgCallback: timestamp: ";
   ADEBUG << std::fixed << std::setprecision(64) << timestamp;
   AINFO << "camera received image : " << GLOG_TIMESTAMP(timestamp)
@@ -125,6 +131,7 @@ void CameraProcessSubnode::ImgCallback(const sensor_msgs::Image &message) {
   cv::Mat mask;
   PERF_BLOCK_END("CameraProcessSubnode_Image_Preprocess");
 
+  //-- @Zuo: call yolo to detect obj
   detector_->Multitask(img, CameraDetectorOptions(), &objects, &mask);
   PERF_BLOCK_END("CameraProcessSubnode_detector_");
 
@@ -215,11 +222,6 @@ void CameraProcessSubnode::VisualObjToSensorObj(
     obj->tracking_time = vobj->track_age;
     obj->latest_tracked_time = vobj->last_track_timestamp;
     obj->velocity = vobj->velocity.cast<double>();
-
-    //-- @Zuo 2018-05-24
-    AINFO << "velocity[" << obj->track_id << "] = " << obj->velocity;
-    AINFO << "velocity theta[" << obj->track_id << "] = " << atan2(vobj->velocity.x(), vobj->velocity.y());
-    AINFO << "distance[" << obj->track_id << "] = " << sqrt(pow(obj->center(0),2)+pow(obj->center(1),2));
 
     obj->anchor_point = obj->center;
     obj->state_uncertainty = vobj->state_uncertainty;

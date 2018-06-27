@@ -69,6 +69,10 @@ class VisualizationSubnode : public Subnode {
 
   EventID vis_driven_event_id_;
   EventID radar_event_id_;
+
+  //-- @Zuo
+  EventID radar_left_event_id_;
+
   EventID camera_event_id_;
   EventID fusion_event_id_;
   EventID motion_event_id_;

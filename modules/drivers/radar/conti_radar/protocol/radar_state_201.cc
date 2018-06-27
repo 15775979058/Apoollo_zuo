@@ -29,6 +29,7 @@ using apollo::drivers::canbus::Byte;
 
 RadarState201::RadarState201() {}
 const uint32_t RadarState201::ID = 0x201;
+const uint32_t RadarState201::ID_1 = 0x211;
 
 void RadarState201::Parse(const std::uint8_t* bytes, int32_t length,
                           ContiRadar* conti_radar) const {

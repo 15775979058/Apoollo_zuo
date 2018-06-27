@@ -30,6 +30,7 @@ using apollo::drivers::canbus::Byte;
 
 ObjectQualityInfo60C::ObjectQualityInfo60C() {}
 const uint32_t ObjectQualityInfo60C::ID = 0x60C;
+const uint32_t ObjectQualityInfo60C::ID_1 = 0x61C;
 
 void ObjectQualityInfo60C::Parse(const std::uint8_t* bytes, int32_t length,
                                  ContiRadar* conti_radar) const {
